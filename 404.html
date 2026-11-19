@@ -208,6 +208,19 @@
       if (cardCode !== null) {
         const { data, error } = await supabaseClient.rpc('get_card_details', { p_code: cardCode });
 
+        // If card is not allotted by admin, deny access immediately
+        if (data?.status === 'unallotted') {
+          document.getElementById('cardContainer').innerHTML = `
+            <div style="text-align: center; padding: 24px 16px;">
+              <div style="font-size: 3rem; margin-bottom: 12px;">🚫</div>
+              <h2 style="font-size: 1.4rem; color: #f87171; margin-bottom: 8px;">Card Not Allotted</h2>
+              <p style="color: #a8a29e; font-size: 0.92rem; line-height: 1.5;">Card #${cardCode} has not been allotted by admin yet. Access denied.</p>
+              <a href="/" style="display: inline-block; margin-top: 18px; color: #f59e0b; text-decoration: none; font-weight: 600;">← Back to Home</a>
+            </div>
+          `;
+          return;
+        }
+
         // Check if card has AT LEAST one destination
         const hasAnyLink = data?.destination_url || data?.whatsapp_url || data?.instagram_url || data?.whatsapp_group_url;
 
