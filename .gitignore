@@ -1,0 +1,10 @@
+# Environment and Secret credentials
+.env
+.env*.local
+*.pem
+*.key
+__pycache__/
+*.py[cod]
+.DS_Store
+node_modules/
+.vercel/
