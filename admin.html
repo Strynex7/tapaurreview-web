@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master Admin Control — review.spread</title>
+  <link rel="icon" href="/assets/reviewspread-logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  
+  <style>
+    :root {
+      --bg: #0a0908;
+      --card-bg: rgba(22, 18, 15, 0.90);
+      --card-border: rgba(245, 158, 11, 0.22);
+      --gold: #f59e0b;
+      --gold-hover: #fbbf24;
+      --gold-glow: rgba(245, 158, 11, 0.22);
+      --cyan: #fbbf24;
+      --text: #fafaf9;
+      --text-muted: #a8a29e;
+      --input-bg: rgba(18, 15, 13, 0.9);
+      --input-border: rgba(255, 255, 255, 0.1);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -15%, rgba(245,158,11,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 70% 45% at 85% 70%, rgba(217,119,6,0.06) 0%, transparent 55%);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding: 40px 16px 80px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .admin-wrap { max-width: 920px; margin: 0 auto; }
+    .admin-header { text-align: center; margin-bottom: 28px; }
+
+    .logo-img {
+      height: 42px;
+      margin: 0 auto 10px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+    }
+
+    .admin-title {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      margin-bottom: 4px;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+
+    .admin-subtitle { color: var(--text-muted); font-size: 0.9rem; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      margin-bottom: 22px;
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: rgba(245,158,11,0.15); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .segmented-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px;
+      border-radius: 12px;
+      gap: 4px;
+      margin-bottom: 22px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover { color: #fff; }
+
+    .tab-btn.active {
+      background: rgba(245, 158, 11, 0.14);
+      color: var(--gold);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-grid { display: grid; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    label { font-size: 0.84rem; font-weight: 600; color: #cbd5e1; }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.94rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    select option { background: #030712; color: #f1f5f9; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 0;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+      color: #0a0500;
+      box-shadow: 0 4px 16px var(--gold-glow);
+    }
+
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+    }
+
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+
+    .btn-xs { padding: 5px 10px; font-size: 0.78rem; border-radius: 6px; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .data-table th {
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      letter-spacing: 0.06em;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+
+    .data-table tbody tr:hover { background: rgba(245, 158, 11, 0.04); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .badge-active { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+    .badge-inactive { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-pending { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge-fulfilled { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+    .tab-count {
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .secret-code-pill {
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .range-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px 4px 2px 0;
+    }
+
+    .unassign-pill-btn {
+      background: transparent;
+      border: 0;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: bold;
+      line-height: 1;
+      padding: 0 2px;
+      transition: color 0.15s;
+    }
+
+    .unassign-pill-btn:hover {
+      color: #f87171;
+    }
+
+    .toast-msg {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 18px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script src="/js/config.js"></script>
+</head>
+<body>
+
+  <div class="admin-wrap">
+
+    <header class="admin-header">
+      <a href="/">
+        <img src="/assets/reviewspread-logo.svg" alt="review.spread" class="logo-img">
+      </a>
+      <h1 class="admin-title">Master Admin Portal</h1>
+      <p class="admin-subtitle">Order fulfillment, user approvals & card allocations</p>
+    </header>
+
+    <!-- Password Login -->
+    <div id="loginCard" class="card" style="max-width: 440px; margin: 0 auto;">
+      <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 14px; text-align: center;">Unlock Dashboard</h2>
+      <form id="loginForm" class="form-grid">
+        <div class="form-group">
+          <label for="adminPass">Master Password</label>
+          <input type="password" id="adminPass" placeholder="Enter master password" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Authenticate Session</button>
+      </form>
+    </div>
+
+    <!-- Main Dashboard -->
+    <main id="mainDashboard" style="display: none;">
+
+      <!-- 1st COMPONENT: Actions & Operations Panel -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            System Operations
+          </div>
+          <button id="refreshBtn" class="btn btn-outline btn-xs">Refresh Data</button>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="segmented-tabs">
+          <button type="button" class="tab-btn active" id="tabApprovals">
+            👤 Pending Approvals
+            <span id="pendingApprovalsCount" class="tab-count" style="display: none;">0</span>
+          </button>
+          <button type="button" class="tab-btn" id="tabOrders">
+            📦 Open Orders
+            <span id="openOrdersCount" class="tab-count" style="display: none;">0</span>
+          </button>
+          <button type="button" class="tab-btn" id="tabAssign">Assign Range</button>
+          <button type="button" class="tab-btn" id="tabTransfer">🔄 Transfer Card</button>
+          <button type="button" class="tab-btn" id="tabCreate">Add Partner</button>
+          <button type="button" class="tab-btn" id="tabPassword">Change Password</button>
+        </div>
+
+        <!-- Tab 0: Pending Sign-up Approvals -->
+        <div id="approvalsView">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Customer / Partner</th>
+                  <th>Mobile Phone</th>
+                  <th>Secret Handshake Code</th>
+                  <th>Registered Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="approvalsTableBody">
+                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading pending sign-ups...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 1: Open Orders -->
+        <div id="ordersView" style="display: none;">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Reseller / Customer</th>
+                  <th>Phone / WhatsApp</th>
+                  <th>Quantity</th>
+                  <th>Total Amount</th>
+                  <th>Date</th>
+                  <th>Notes</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Loading orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Assign Range -->
+        <form id="assignForm" class="form-grid" style="display: none;">
+          <div class="form-group">
+            <label>Select Partner</label>
+            <select id="assignResellerSelect" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Starting Card #</label>
+              <input type="number" id="rangeStart" placeholder="e.g. 51" min="1" required>
+            </div>
+            <div class="form-group">
+              <label>Ending Card #</label>
+              <input type="number" id="rangeEnd" placeholder="e.g. 100" min="1" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 6px;">Assign Card Range</button>
+        </form>
+
+        <!-- Tab 3: Transfer Single Card (Preserving Details) -->
+        <form id="transferForm" class="form-grid" style="display: none;">
+          <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 4px;">
+            Move ownership of any individual card to another partner. <strong>All business details, Google links, WhatsApp, Instagram, and tap counters will be completely preserved.</strong>
+          </p>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Card # to Move</label>
+              <input type="number" id="transferCardCode" placeholder="e.g. 21" min="1" required>
+            </div>
+            <div class="form-group">
+              <label>New Owner / Target Partner</label>
+              <select id="transferResellerSelect" required></select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 6px;">🔄 Transfer Card Ownership</button>
+        </form>
+
+        <!-- Tab 4: Manual Add Partner -->
+        <form id="createForm" class="form-grid" style="display: none;">
+          <div class="form-group">
+            <label>Partner Name</label>
+            <input type="text" id="newResellerName" placeholder="e.g. Rahul Verma" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>WhatsApp / Phone Number</label>
+              <input type="tel" id="newResellerPhone" placeholder="e.g. 9876543210" required>
+            </div>
+            <div class="form-group">
+              <label>4-Digit Security PIN</label>
+              <input type="password" id="newResellerPass" placeholder="e.g. 1234" maxlength="4" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 6px;">Create Reseller Record</button>
+        </form>
+
+        <!-- Tab 5: Change Password -->
+        <form id="passwordForm" class="form-grid" style="display: none;">
+          <div class="form-group">
+            <label>Select Partner</label>
+            <select id="passwordResellerSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label>New 4-Digit Security PIN</label>
+            <input type="password" id="newResellerNewPass" placeholder="Enter replacement PIN" maxlength="4" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 6px;">Update PIN</button>
+        </form>
+
+        <div id="toastBox" class="toast-msg"></div>
+      </section>
+
+      <!-- 2nd COMPONENT: Active Partners Overview with Unassign Controls -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Active Partners & Inventory
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Partner Name</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Assigned Card Ranges (Click ✕ to Unassign)</th>
+              </tr>
+            </thead>
+            <tbody id="resellerTableBody">
+              <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading system data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Lock Session Button -->
+      <div style="text-align: center; margin-top: 10px;">
+        <button id="lockSessionBtn" class="btn btn-outline" style="border: 0; color: #ef4444; font-size: 0.85rem;">
+          🔒 Lock Admin Dashboard
+        </button>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script>
+    const supabaseUrl = window.CONFIG?.SUPABASE_URL || '';
+    const supabaseKey = window.CONFIG?.SUPABASE_KEY || '';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    let activeAdminPass = sessionStorage.getItem('ttr_admin_pass') || '';
+    let globalOrders = [];
+    let globalPending = [];
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toastBox');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      toast.style.border = isError ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(34, 197, 94, 0.4)';
+      toast.style.background = isError ? 'rgba(239, 68, 68, 0.12)' : 'rgba(34, 197, 94, 0.12)';
+      toast.style.color = isError ? '#fca5a5' : '#86efac';
+    }
+
+    async function loadData() {
+      const { data, error } = await supabaseClient.rpc('admin_get_overview', {
+        p_admin_password: activeAdminPass
+      });
+
+      if (error || !data?.success) {
+        sessionStorage.removeItem('ttr_admin_pass');
+        activeAdminPass = '';
+        document.getElementById('mainDashboard').style.display = 'none';
+        document.getElementById('loginCard').style.display = 'block';
+        alert(data?.message || 'Invalid master password or expired session.');
+        return;
+      }
+
+      document.getElementById('loginCard').style.display = 'none';
+      document.getElementById('mainDashboard').style.display = 'block';
+
+      // Render Active Partners Table & Dropdowns
+      const tbody = document.getElementById('resellerTableBody');
+      const assignSelect = document.getElementById('assignResellerSelect');
+      const transferSelect = document.getElementById('transferResellerSelect');
+      const passwordSelect = document.getElementById('passwordResellerSelect');
+
+      tbody.innerHTML = '';
+      assignSelect.innerHTML = '';
+      transferSelect.innerHTML = '';
+      passwordSelect.innerHTML = '';
+
+      const resellers = data.resellers || [];
+      const batches = data.batches || [];
+      globalOrders = data.orders || [];
+      globalPending = data.pending_resellers || [];
+
+      if (resellers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No active partners onboarded yet.</td></tr>';
+      } else {
+        resellers.forEach(r => {
+          assignSelect.add(new Option(r.name, r.name));
+          transferSelect.add(new Option(r.name, r.name));
+          passwordSelect.add(new Option(r.name, r.name));
+
+          const rBatches = batches.filter(b => b.reseller_name === r.name && (b.is_active !== false));
+          const rangesHtml = rBatches.length > 0
+            ? rBatches.map(b => `
+                <span class="range-pill">
+                  #${b.range_start}–#${b.range_end}
+                  <button type="button" class="unassign-pill-btn" onclick="unassignBatch('${b.id}', '${r.name}', ${b.range_start}, ${b.range_end})" title="Unassign cards #${b.range_start}–#${b.range_end}">✕</button>
+                </span>
+              `).join(' ')
+            : '<span style="color: var(--text-muted); font-size: 0.8rem;">None assigned</span>';
+
+          const isPartnerActive = r.is_active !== undefined ? r.is_active : (r.status === 'approved');
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><strong>${r.name}</strong></td>
+            <td style="color: #cbd5e1;">${r.phone || '—'}</td>
+            <td>
+              <span class="badge ${isPartnerActive ? 'badge-active' : 'badge-inactive'}">
+                ${isPartnerActive ? '● Active' : '● Disabled'}
+              </span>
+            </td>
+            <td>${rangesHtml}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      renderApprovalsTable(globalPending);
+      renderOrdersTable(globalOrders);
+    }
+
+    // Unassign Batch Functionality
+    window.unassignBatch = async function(batchId, resellerName, start, end) {
+      if (!confirm(`Unassign cards #${start}–#${end} from ${resellerName}?`)) return;
+
+      const resetCards = confirm(
+        `Do you also want to clear/reset the card links back to 'unregistered'?\n\n` +
+        `• Click OK if this was a demo card and you want to wipe it for the next demo.\n` +
+        `• Click Cancel if you want to keep the existing business setup on the card.`
+      );
+
+      showToast(`Unassigning cards #${start}–#${end}...`);
+      const { data, error } = await supabaseClient.rpc('admin_unassign_batch', {
+        p_admin_password: activeAdminPass,
+        p_batch_id: batchId,
+        p_reset_cards: resetCards
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to unassign card batch.', true);
+        return;
+      }
+
+      showToast(data.message || 'Batch unassigned successfully!');
+      await loadData();
+    };
+
+    function renderApprovalsTable(pendingList) {
+      const tbody = document.getElementById('approvalsTableBody');
+      tbody.innerHTML = '';
+
+      const badgeCountEl = document.getElementById('pendingApprovalsCount');
+      if (pendingList.length > 0) {
+        badgeCountEl.textContent = pendingList.length;
+        badgeCountEl.style.display = 'inline-block';
+      } else {
+        badgeCountEl.style.display = 'none';
+      }
+
+      if (pendingList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No pending sign-ups right now.</td></tr>';
+        return;
+      }
+
+      pendingList.forEach(p => {
+        const dateStr = new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const cleanPhone = p.phone ? p.phone.replace(/\D/g, '').slice(-10) : '';
+        const phoneHtml = cleanPhone
+          ? `<a href="https://wa.me/91${cleanPhone}" target="_blank" rel="noopener" style="color: #22c55e; text-decoration: none;">💬 ${cleanPhone}</a>`
+          : '<span style="color: var(--text-muted);">—</span>';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${p.name}</strong></td>
+          <td>${phoneHtml}</td>
+          <td><span class="secret-code-pill">${p.verification_code || 'N/A'}</span></td>
+          <td style="font-size: 0.82rem; color: var(--text-muted);">${dateStr}</td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-outline btn-xs" onclick="handleApproval('${p.id}', '${p.name}', 'approve')" style="color: #4ade80; border-color: rgba(34, 197, 94, 0.4);">
+                ✓ Approve
+              </button>
+              <button class="btn btn-outline btn-xs" onclick="handleApproval('${p.id}', '${p.name}', 'reject')" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);">
+                ✕ Reject
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    window.handleApproval = async function(resellerId, name, action) {
+      const verb = action === 'approve' ? 'Approve' : 'Reject & Delete';
+      if (!confirm(`${verb} registration for "${name}"?`)) return;
+
+      showToast(`${action === 'approve' ? 'Approving' : 'Rejecting'} account...`);
+      const { data, error } = await supabaseClient.rpc('admin_approve_reseller', {
+        p_admin_password: activeAdminPass,
+        p_reseller_id: resellerId,
+        p_action: action
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to update approval.', true);
+        return;
+      }
+
+      showToast(data.message);
+      await loadData();
+    };
+
+    function renderOrdersTable(orders) {
+      const tbody = document.getElementById('ordersTableBody');
+      tbody.innerHTML = '';
+
+      const pendingOrders = orders.filter(o => o.status === 'pending');
+      const badgeCountEl = document.getElementById('openOrdersCount');
+
+      if (pendingOrders.length > 0) {
+        badgeCountEl.textContent = pendingOrders.length;
+        badgeCountEl.style.display = 'inline-block';
+      } else {
+        badgeCountEl.style.display = 'none';
+      }
+
+      if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">No orders placed yet.</td></tr>';
+        return;
+      }
+
+      orders.forEach(o => {
+        const dateStr = new Date(o.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const isPending = o.status === 'pending';
+        const cleanPhone = o.phone ? o.phone.replace(/\D/g, '').slice(-10) : '';
+
+        const phoneHtml = cleanPhone
+          ? `<a href="https://wa.me/91${cleanPhone}" target="_blank" rel="noopener" style="color: #22c55e; text-decoration: none;">💬 ${cleanPhone}</a>`
+          : '<span style="color: var(--text-muted);">—</span>';
+
+        const actionHtml = isPending
+          ? `<button class="btn btn-outline btn-xs" onclick="fulfillOrder('${o.id}', '${o.reseller_name}')" style="color: #4ade80; border-color: rgba(34, 197, 94, 0.4);">
+               ✓ Fulfill & Assign
+             </button>`
+          : `<span style="color: var(--text-muted); font-size: 0.8rem;">Completed</span>`;
+
+        const amountHtml = o.total_amount 
+          ? `<strong style="color: var(--gold);">₹${o.total_amount.toLocaleString('en-IN')}</strong>` 
+          : '—';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${o.reseller_name}</strong></td>
+          <td>${phoneHtml}</td>
+          <td><strong>${o.card_quantity}</strong> Cards</td>
+          <td>${amountHtml}</td>
+          <td style="font-size: 0.82rem; color: var(--text-muted);">${dateStr}</td>
+          <td style="font-size: 0.82rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${o.notes || ''}">
+            ${o.notes || '—'}
+          </td>
+          <td><span class="badge ${isPending ? 'badge-pending' : 'badge-fulfilled'}">${o.status}</span></td>
+          <td>${actionHtml}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    window.fulfillOrder = async function(orderId, resellerName) {
+      if (!confirm(`Mark order for ${resellerName} as fulfilled and open card allocation?`)) return;
+
+      showToast('Updating order status...');
+      const { data, error } = await supabaseClient.rpc('admin_update_order_status', {
+        p_admin_password: activeAdminPass,
+        p_order_id: orderId,
+        p_status: 'fulfilled'
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to update order status.', true);
+        return;
+      }
+
+      showToast(`Order marked fulfilled! Select card numbers to assign to ${resellerName}.`);
+      await loadData();
+
+      setTab(tabAssign, assignForm);
+      const sel = document.getElementById('assignResellerSelect');
+      if (sel) sel.value = resellerName;
+      document.getElementById('rangeStart').focus();
+    };
+
+    // Tab Switching
+    const tabApprovals = document.getElementById('tabApprovals');
+    const tabOrders = document.getElementById('tabOrders');
+    const tabAssign = document.getElementById('tabAssign');
+    const tabTransfer = document.getElementById('tabTransfer');
+    const tabCreate = document.getElementById('tabCreate');
+    const tabPassword = document.getElementById('tabPassword');
+
+    const approvalsView = document.getElementById('approvalsView');
+    const ordersView = document.getElementById('ordersView');
+    const assignForm = document.getElementById('assignForm');
+    const transferForm = document.getElementById('transferForm');
+    const createForm = document.getElementById('createForm');
+    const passwordForm = document.getElementById('passwordForm');
+
+    function setTab(btn, el) {
+      [tabApprovals, tabOrders, tabAssign, tabTransfer, tabCreate, tabPassword].forEach(b => b.classList.remove('active'));
+      [approvalsView, ordersView, assignForm, transferForm, createForm, passwordForm].forEach(e => e.style.display = 'none');
+      btn.classList.add('active');
+      el.style.display = (el === approvalsView || el === ordersView) ? 'block' : 'grid';
+      document.getElementById('toastBox').style.display = 'none';
+    }
+
+    tabApprovals.addEventListener('click', () => setTab(tabApprovals, approvalsView));
+    tabOrders.addEventListener('click', () => setTab(tabOrders, ordersView));
+    tabAssign.addEventListener('click', () => setTab(tabAssign, assignForm));
+    tabTransfer.addEventListener('click', () => setTab(tabTransfer, transferForm));
+    tabCreate.addEventListener('click', () => setTab(tabCreate, createForm));
+    tabPassword.addEventListener('click', () => setTab(tabPassword, passwordForm));
+
+    // Login Form Submit
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      activeAdminPass = document.getElementById('adminPass').value.trim();
+      sessionStorage.setItem('ttr_admin_pass', activeAdminPass);
+      await loadData();
+    });
+
+    // Refresh & Logout
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+    document.getElementById('lockSessionBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('ttr_admin_pass');
+      location.reload();
+    });
+
+    // Form: Assign Range
+    assignForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('assignResellerSelect').value;
+      const start = parseInt(document.getElementById('rangeStart').value, 10);
+      const end = parseInt(document.getElementById('rangeEnd').value, 10);
+
+      showToast('Allocating cards...');
+      const { data, error } = await supabaseClient.rpc('admin_assign_batch', {
+        p_admin_password: activeAdminPass,
+        p_reseller_name: name,
+        p_range_start: start,
+        p_range_end: end
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to assign.', true);
+        return;
+      }
+
+      showToast(`Success! Assigned cards #${start} through #${end} to ${name}.`);
+      document.getElementById('rangeStart').value = '';
+      document.getElementById('rangeEnd').value = '';
+      loadData();
+    });
+
+    // Form: Transfer Single Card
+    transferForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cardCode = parseInt(document.getElementById('transferCardCode').value, 10);
+      const targetName = document.getElementById('transferResellerSelect').value;
+
+      if (!confirm(`Transfer Card #${cardCode} to ${targetName}?\n\nAll existing business details, review links, and tap counters will be preserved.`)) return;
+
+      showToast(`Transferring Card #${cardCode}...`);
+      const { data, error } = await supabaseClient.rpc('admin_transfer_single_card', {
+        p_admin_password: activeAdminPass,
+        p_card_code: cardCode,
+        p_target_reseller: targetName
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to transfer card.', true);
+        return;
+      }
+
+      showToast(data.message);
+      document.getElementById('transferCardCode').value = '';
+      await loadData();
+    });
+
+    // Form: Create Reseller manually
+    createForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('newResellerName').value.trim();
+      const phone = document.getElementById('newResellerPhone').value.trim();
+      const pass = document.getElementById('newResellerPass').value.trim();
+
+      showToast('Creating partner account...');
+      const { data, error } = await supabaseClient.rpc('admin_create_reseller', {
+        p_admin_password: activeAdminPass,
+        p_reseller_name: name,
+        p_reseller_password: pass,
+        p_phone: phone
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to create partner.', true);
+        return;
+      }
+
+      showToast(`Partner account created for ${name}!`);
+      document.getElementById('newResellerName').value = '';
+      document.getElementById('newResellerPhone').value = '';
+      document.getElementById('newResellerPass').value = '';
+      loadData();
+    });
+
+    // Form: Change Password
+    passwordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('passwordResellerSelect').value;
+      const pass = document.getElementById('newResellerNewPass').value.trim();
+
+      showToast('Updating PIN...');
+      const { data, error } = await supabaseClient.rpc('admin_update_reseller_password', {
+        p_admin_password: activeAdminPass,
+        p_reseller_name: name,
+        p_new_password: pass
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to update PIN.', true);
+        return;
+      }
+
+      showToast(`PIN updated for ${name}.`);
+      document.getElementById('newResellerNewPass').value = '';
+    });
+
+    // Dynamic Brand Name replacement across the DOM
+    if (window.CONFIG?.BRAND_NAME) {
+      const bName = window.CONFIG.BRAND_NAME;
+      if (document.title.includes('review.spread')) {
+        document.title = document.title.replace(/review\.spread/g, bName);
+      }
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      const textNodes = [];
+      while (walker.nextNode()) {
+        if (walker.currentNode.nodeValue && walker.currentNode.nodeValue.includes('review.spread')) {
+          textNodes.push(walker.currentNode);
+        }
+      }
+      textNodes.forEach(node => {
+        node.nodeValue = node.nodeValue.replace(/review\.spread/g, bName);
+      });
+    }
+
+    if (activeAdminPass) {
+      loadData();
+    }
+  </script>
+</body>
+</html>

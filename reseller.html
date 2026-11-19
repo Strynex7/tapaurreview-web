@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer & Partner Portal — review.spread</title>
+  <link rel="icon" href="/assets/reviewspread-logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+
+  <style>
+    :root {
+      --bg: #0a0908;
+      --card-bg: rgba(22, 18, 15, 0.90);
+      --card-border: rgba(245, 158, 11, 0.22);
+      --gold: #f59e0b;
+      --gold-hover: #fbbf24;
+      --gold-glow: rgba(245, 158, 11, 0.22);
+      --cyan: #fbbf24;
+      --text: #fafaf9;
+      --text-muted: #a8a29e;
+      --input-bg: rgba(18, 15, 13, 0.9);
+      --input-border: rgba(255, 255, 255, 0.1);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -15%, rgba(245,158,11,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 70% 45% at 85% 70%, rgba(217,119,6,0.06) 0%, transparent 55%);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      padding: 36px 16px 80px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo-img {
+      height: 40px;
+      margin: 0 auto 10px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+    }
+
+    .title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      margin-bottom: 4px;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+      transition: border-color 0.2s;
+    }
+
+    .partner-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(245, 158, 11, 0.07);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+
+    .partner-name {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--gold);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .partner-phone {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .quick-activate-box {
+      background: rgba(56, 189, 248, 0.07);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .quick-activate-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quick-row { display: flex; gap: 10px; }
+
+    .segmented-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px;
+      border-radius: 12px;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      background: rgba(245, 158, 11, 0.14);
+      color: var(--gold);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .form-grid { display: grid; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+    label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.94rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    select option { background: #030712; color: #f1f5f9; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 0;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+      color: #0a0500;
+      box-shadow: 0 4px 16px var(--gold-glow);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+    }
+
+    .btn-upi {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-upi:hover { filter: brightness(1.1); }
+
+    .range-chip {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(56, 189, 248, 0.09);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin: 4px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 10px;
+      transition: background 0.15s;
+    }
+    .order-item:hover { background: rgba(245,158,11,0.04); }
+
+    .badge-status {
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-fulfilled { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+    .pricing-summary-box {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-top: 10px;
+    }
+
+    .pricing-val-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .order-amount-display {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--gold);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 12px;
+      width: 200px;
+      margin: 0 auto 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .qr-img {
+      width: 172px;
+      height: 172px;
+      display: block;
+    }
+
+    .toast-box {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    @media (max-width: 500px) {
+      .card { padding: 18px; }
+      .quick-row { flex-direction: column; }
+    }
+  </style>
+  <script src="/js/config.js"></script>
+</head>
+<body>
+
+  <div class="wrap">
+
+    <header class="header">
+      <a href="/">
+        <img src="/assets/reviewspread-logo.svg" alt="review.spread" class="logo-img">
+      </a>
+      <h1 class="title">Customer & Partner Portal</h1>
+      <p class="subtitle">Direct smart card orders, inventory & activation</p>
+    </header>
+
+    <!-- 1. Authentication Card: Sign In OR Register -->
+    <div id="loginCard" class="card" style="max-width: 440px; margin: 0 auto;">
+      
+      <!-- Auth Switcher -->
+      <div class="segmented-tabs" style="margin-bottom: 16px;">
+        <button type="button" class="tab-btn active" id="authTabSignIn">Sign In</button>
+        <button type="button" class="tab-btn" id="authTabSignUp">Register New Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="resellerLoginForm" class="form-grid" autocomplete="off">
+        <div class="form-group">
+          <label>10-Digit Mobile Number or Name</label>
+          <input type="text" id="loginIdentifier" placeholder="e.g. 9876543210" required autofocus>
+        </div>
+        <div class="form-group">
+          <label>4-Digit Security PIN</label>
+          <input type="password" id="loginPass" placeholder="Enter 4-digit PIN" maxlength="4" inputmode="numeric" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">Sign In</button>
+      </form>
+
+      <!-- Self-Registration Form -->
+      <form id="resellerRegisterForm" class="form-grid" style="display: none;" autocomplete="off">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="regName" placeholder="e.g. Rahul Sharma" required>
+        </div>
+        <div class="form-group">
+          <label>10-Digit WhatsApp Mobile Number</label>
+          <input type="tel" id="regPhone" placeholder="e.g. 9876543210" maxlength="10" required>
+        </div>
+        <div class="form-group">
+          <label>Create 4-Digit Security PIN</label>
+          <input type="password" id="regPin" placeholder="e.g. 1234" maxlength="4" inputmode="numeric" required autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>Confirm 4-Digit Security PIN</label>
+          <input type="password" id="regPinConfirm" placeholder="Re-enter 4-digit PIN" maxlength="4" inputmode="numeric" required autocomplete="new-password">
+        </div>
+        <button type="submit" id="btnRegisterSubmit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">
+          Submit & Verify on WhatsApp
+        </button>
+        <p style="font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 4px;">
+          * Generates a secret verification handshake code to verify your phone.
+        </p>
+      </form>
+
+      <div id="authToast" class="toast-box"></div>
+    </div>
+
+    <!-- 2. Dashboard View (Shown once logged in) -->
+    <main id="portalDashboard" style="display: none;">
+
+      <!-- Partner Identity Header -->
+      <div class="partner-bar">
+        <div>
+          <div class="partner-name" id="displayResellerName">Partner Name</div>
+          <div class="partner-phone" id="displayResellerPhone">Phone: —</div>
+        </div>
+        <button id="logoutBtn" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; color: #ef4444;">
+          Sign Out
+        </button>
+      </div>
+
+      <!-- Quick Card Activator Shortcut -->
+      <div class="quick-activate-box">
+        <div class="quick-activate-title">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Quick Card Launcher
+        </div>
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 12px;">
+          Jump straight into setup or re-assignment for any card:
+        </p>
+        <form id="quickLaunchForm" class="quick-row">
+          <input type="number" id="quickCardCode" placeholder="Enter Card # (e.g. 21)" min="1" required style="max-width: 200px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Open Card Setup</button>
+        </form>
+      </div>
+
+      <!-- Main Portal Tabs -->
+      <div class="card">
+        <div class="segmented-tabs">
+          <button type="button" class="tab-btn active" id="tabInventoryBtn">My Inventory</button>
+          <button type="button" class="tab-btn" id="tabOrderBtn">Re-order Cards</button>
+          <button type="button" class="tab-btn" id="tabHistoryBtn">Order History</button>
+        </div>
+
+        <!-- Tab 1: Inventory -->
+        <div id="tabInventoryView">
+          <h3 style="font-size: 0.95rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">
+            Allocated Card Ranges
+          </h3>
+          <div id="batchesContainer" style="display: flex; flex-wrap: wrap; margin-bottom: 16px;">
+            <span style="color: var(--text-muted); font-size: 0.9rem;">Loading batches...</span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.4;">
+            * You can register and reset any card within these numbers using your 4-digit PIN.
+          </p>
+        </div>
+
+        <!-- Tab 2: Re-order Cards with Pricing & UPI -->
+        <div id="tabOrderView" style="display: none;">
+          <form id="orderCardsForm" class="form-grid">
+            <div class="form-group">
+              <label>Select Inventory Pack</label>
+              <select id="orderQty" required></select>
+            </div>
+
+            <div class="form-group">
+              <label>Delivery Address / Notes (Optional)</label>
+              <textarea id="orderNotes" rows="2" placeholder="Delivery address or dispatch instructions"></textarea>
+            </div>
+
+            <!-- Auto-Populated Payment Breakdown -->
+            <div class="pricing-summary-box">
+              <div class="pricing-val-row">
+                <div>
+                  <div style="font-size: 0.82rem; color: var(--text-muted);">Total Order Value:</div>
+                  <div id="orderRateNote" style="font-size: 0.8rem; color: #38bdf8;">Rate: ₹240/card</div>
+                </div>
+                <div class="order-amount-display" id="displayOrderAmount">₹2,400</div>
+              </div>
+
+              <!-- Dynamic UPI QR Code -->
+              <div style="text-align: center; margin-bottom: 12px;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Scan with GPay / PhonePe / Paytm:</p>
+                <div class="qr-container">
+                  <img id="upiQrImg" class="qr-img" alt="UPI Payment QR Code" src="">
+                </div>
+                <span style="font-size: 0.76rem; color: #94a3b8;">UPI ID: <strong id="displayUpiId" style="color: #cbd5e1;"></strong></span>
+              </div>
+
+              <!-- Direct UPI Intent Link -->
+              <a id="btnPayUpiIntent" class="btn btn-upi" href="#" style="width: 100%; margin-bottom: 10px;">
+                ⚡ Pay via UPI App (GPay / PhonePe / Paytm)
+              </a>
+            </div>
+
+            <button type="submit" id="orderSubmitBtn" class="btn btn-primary" style="margin-top: 6px;">
+              Submit Order & Ping on WhatsApp
+            </button>
+          </form>
+        </div>
+
+        <!-- Tab 3: Order History -->
+        <div id="tabHistoryView" style="display: none;">
+          <div id="ordersContainer">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Loading past orders...</p>
+          </div>
+        </div>
+
+        <div id="toastBox" class="toast-box"></div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // EXACT PRICING TIERS & UPI CONFIGURATION
+    // ==========================================
+    const ADMIN_UPI_ID = window.CONFIG?.ADMIN_UPI_ID || '';
+    const ADMIN_PHONE = window.CONFIG?.ADMIN_PHONE || '';
+
+    const PRICING_TIERS = window.CONFIG?.PRICING_TIERS || {
+      1:  { total: 350,  rate: 350, label: '1 Card — Single (₹350/card = ₹350)' },
+      5:  { total: 1350, rate: 270, label: '5 Cards — Starter (₹270/card = ₹1,350)' },
+      10: { total: 2400, rate: 240, label: '10 Cards — Pro Pack (₹240/card = ₹2,400)' },
+      20: { total: 4400, rate: 220, label: '20 Cards — Growth Pack (₹220/card = ₹4,400)' },
+      50: { total: 9500, rate: 190, label: '50 Cards — Agency Pack (₹190/card = ₹9,500)' }
+    };
+
+    const supabaseUrl = window.CONFIG?.SUPABASE_URL || '';
+    const supabaseKey = window.CONFIG?.SUPABASE_KEY || '';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    let activeIdentifier = localStorage.getItem('ttr_reseller_identifier') || '';
+    let activeResellerPass = sessionStorage.getItem('ttr_reseller_pass') || '';
+    let verifiedResellerName = '';
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toastBox');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      toast.style.border = isError ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(34, 197, 94, 0.4)';
+      toast.style.background = isError ? 'rgba(239, 68, 68, 0.12)' : 'rgba(34, 197, 94, 0.12)';
+      toast.style.color = isError ? '#fca5a5' : '#86efac';
+    }
+
+    function showAuthToast(msg, isError = false) {
+      const toast = document.getElementById('authToast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      toast.style.border = isError ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(34, 197, 94, 0.4)';
+      toast.style.background = isError ? 'rgba(239, 68, 68, 0.12)' : 'rgba(34, 197, 94, 0.12)';
+      toast.style.color = isError ? '#fca5a5' : '#86efac';
+    }
+
+    // Toggle Sign In vs Sign Up
+    const authTabSignIn = document.getElementById('authTabSignIn');
+    const authTabSignUp = document.getElementById('authTabSignUp');
+    const loginForm = document.getElementById('resellerLoginForm');
+    const registerForm = document.getElementById('resellerRegisterForm');
+
+    authTabSignIn.addEventListener('click', () => {
+      authTabSignIn.classList.add('active');
+      authTabSignUp.classList.remove('active');
+      loginForm.style.display = 'grid';
+      registerForm.style.display = 'none';
+      document.getElementById('authToast').style.display = 'none';
+    });
+
+    authTabSignUp.addEventListener('click', () => {
+      authTabSignUp.classList.add('active');
+      authTabSignIn.classList.remove('active');
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'grid';
+      document.getElementById('authToast').style.display = 'none';
+    });
+
+    // Handle Self-Registration with Secret Code Handshake
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim().replace(/\D/g, '');
+      const pin = document.getElementById('regPin').value.trim();
+      const pinConfirm = document.getElementById('regPinConfirm').value.trim();
+      const btn = document.getElementById('btnRegisterSubmit');
+
+      if (phone.length < 10) {
+        showAuthToast('Please enter a valid 10-digit mobile number.', true);
+        return;
+      }
+      if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        showAuthToast('PIN must be exactly 4 digits.', true);
+        return;
+      }
+      if (pin !== pinConfirm) {
+        showAuthToast('PINs do not match. Please re-enter.', true);
+        return;
+      }
+
+      // Generate random 4-digit handshake token
+      const verificationCode = 'TR-' + Math.floor(1000 + Math.random() * 9000);
+
+      btn.disabled = true;
+      btn.textContent = 'Submitting registration...';
+      showAuthToast('Submitting registration...');
+
+      const { data, error } = await supabaseClient.rpc('self_register_reseller', {
+        p_name: name,
+        p_phone: phone,
+        p_pin: pin,
+        p_code: verificationCode
+      });
+
+      btn.disabled = false;
+      btn.textContent = 'Submit & Verify on WhatsApp';
+
+      if (error || !data?.success) {
+        showAuthToast(data?.message || error?.message || 'Registration failed.', true);
+        return;
+      }
+
+      showAuthToast('Registration received! Opening WhatsApp to send verification code...');
+
+      // Open WhatsApp with secret code verification
+      const brand = window.CONFIG?.BRAND_NAME || 'review.spread';
+      const waMsg = `Hi ${brand},\nI just registered for an account.\n\nName: ${name}\nPhone: ${phone}\nVerification Code: ${verificationCode}\n\nPlease verify and approve my account.`;
+      window.open(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(waMsg)}`, '_blank', 'noopener');
+
+      // Pre-fill Sign-In tab
+      document.getElementById('loginIdentifier').value = phone;
+      document.getElementById('loginPass').value = '';
+      authTabSignIn.click();
+      showAuthToast('Verification message generated! Once approved by admin, you can log in with your PIN.');
+    });
+
+    // Populate Quantity Dropdown Strictly to 1, 5, 10, 20, 50
+    const qtySelect = document.getElementById('orderQty');
+    qtySelect.innerHTML = '';
+    [1, 5, 10, 20, 50].forEach((qty) => {
+      const opt = document.createElement('option');
+      opt.value = qty;
+      opt.textContent = PRICING_TIERS[qty].label;
+      if (qty === 10) opt.selected = true;
+      qtySelect.appendChild(opt);
+    });
+
+    function updateOrderPricing() {
+      const selectedQty = parseInt(qtySelect.value, 10);
+      const tier = PRICING_TIERS[selectedQty] || { total: selectedQty * 240, rate: 240 };
+
+      document.getElementById('displayOrderAmount').textContent = `₹${tier.total.toLocaleString('en-IN')}`;
+      document.getElementById('orderRateNote').textContent = `Rate: ₹${tier.rate}/card`;
+      document.getElementById('displayUpiId').textContent = ADMIN_UPI_ID;
+
+      const partnerName = verifiedResellerName || activeIdentifier || 'Partner';
+      const brand = window.CONFIG?.BRAND_NAME || 'review.spread';
+      const note = encodeURIComponent(`${brand} ${selectedQty} Cards Order - ${partnerName}`);
+      const upiUri = `upi://pay?pa=${ADMIN_UPI_ID}&pn=${encodeURIComponent(brand)}&am=${tier.total}&cu=INR&tn=${note}`;
+
+      document.getElementById('btnPayUpiIntent').href = upiUri;
+
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=2&data=${encodeURIComponent(upiUri)}`;
+      document.getElementById('upiQrImg').src = qrApiUrl;
+    }
+
+    qtySelect.addEventListener('change', updateOrderPricing);
+
+    async function loadPortal() {
+      const { data, error } = await supabaseClient.rpc('reseller_get_portal', {
+        p_identifier: activeIdentifier,
+        p_password: activeResellerPass
+      });
+
+      if (error || !data?.success) {
+        sessionStorage.removeItem('ttr_reseller_pass');
+        activeResellerPass = '';
+        document.getElementById('portalDashboard').style.display = 'none';
+        document.getElementById('loginCard').style.display = 'block';
+        if (data?.message) {
+          showAuthToast(data.message, true);
+        }
+        if (activeIdentifier) {
+          document.getElementById('loginIdentifier').value = activeIdentifier;
+        }
+        return;
+      }
+
+      verifiedResellerName = data.reseller.name;
+
+      document.getElementById('loginCard').style.display = 'none';
+      document.getElementById('portalDashboard').style.display = 'block';
+
+      document.getElementById('displayResellerName').textContent = data.reseller.name;
+      document.getElementById('displayResellerPhone').textContent = data.reseller.phone ? `Phone: ${data.reseller.phone}` : 'Registered Partner';
+
+      // Render Batches
+      const batchContainer = document.getElementById('batchesContainer');
+      const batches = data.batches || [];
+      if (batches.length === 0) {
+        batchContainer.innerHTML = '<span style="color: var(--text-muted); font-size: 0.9rem;">No active batches assigned yet.</span>';
+      } else {
+        batchContainer.innerHTML = batches.map(b => 
+          `<span class="range-chip">Cards #${b.range_start}–#${b.range_end}</span>`
+        ).join('');
+      }
+
+      // Render Past Orders
+      const ordersContainer = document.getElementById('ordersContainer');
+      const orders = data.orders || [];
+      if (orders.length === 0) {
+        ordersContainer.innerHTML = '<span style="color: var(--text-muted); font-size: 0.9rem;">No orders placed yet.</span>';
+      } else {
+        ordersContainer.innerHTML = orders.map(o => {
+          const dateStr = new Date(o.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+          const statusClass = o.status === 'fulfilled' ? 'status-fulfilled' : 'status-pending';
+          const amountStr = o.total_amount ? `₹${o.total_amount.toLocaleString('en-IN')}` : '—';
+          return `
+            <div class="order-item">
+              <div>
+                <div style="font-weight: 700; font-size: 0.95rem;">
+                  <span>${o.card_quantity} Cards</span>
+                  <span style="color: var(--gold); margin-left: 8px;">(${amountStr})</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
+                  Placed on ${dateStr} ${o.notes ? `• ${o.notes}` : ''}
+                </div>
+              </div>
+              <span class="badge-status ${statusClass}">${o.status}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      updateOrderPricing();
+    }
+
+    // Login Form Submit
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      activeIdentifier = document.getElementById('loginIdentifier').value.trim();
+      activeResellerPass = document.getElementById('loginPass').value.trim();
+
+      localStorage.setItem('ttr_reseller_identifier', activeIdentifier);
+      sessionStorage.setItem('ttr_reseller_pass', activeResellerPass);
+      localStorage.setItem('ttr_reseller_mode', 'true');
+
+      await loadPortal();
+    });
+
+    // Quick Launch Card
+    document.getElementById('quickLaunchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = document.getElementById('quickCardCode').value.trim();
+      if (code) {
+        window.location.href = `/activate?code=${code}`;
+      }
+    });
+
+    // Tab Switching
+    const tabInventoryBtn = document.getElementById('tabInventoryBtn');
+    const tabOrderBtn = document.getElementById('tabOrderBtn');
+    const tabHistoryBtn = document.getElementById('tabHistoryBtn');
+    const tabInventoryView = document.getElementById('tabInventoryView');
+    const tabOrderView = document.getElementById('tabOrderView');
+    const tabHistoryView = document.getElementById('tabHistoryView');
+
+    function switchTab(btn, view) {
+      [tabInventoryBtn, tabOrderBtn, tabHistoryBtn].forEach(b => b.classList.remove('active'));
+      [tabInventoryView, tabOrderView, tabHistoryView].forEach(v => v.style.display = 'none');
+      btn.classList.add('active');
+      view.style.display = 'block';
+      document.getElementById('toastBox').style.display = 'none';
+      if (view === tabOrderView) {
+        updateOrderPricing();
+      }
+    }
+
+    tabInventoryBtn.addEventListener('click', () => switchTab(tabInventoryBtn, tabInventoryView));
+    tabOrderBtn.addEventListener('click', () => switchTab(tabOrderBtn, tabOrderView));
+    tabHistoryBtn.addEventListener('click', () => switchTab(tabHistoryBtn, tabHistoryView));
+
+    // Submit Restock Order
+    document.getElementById('orderCardsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const qty = parseInt(qtySelect.value, 10);
+      const userNotes = document.getElementById('orderNotes').value.trim();
+      const tier = PRICING_TIERS[qty] || { total: qty * 240 };
+      const btn = document.getElementById('orderSubmitBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Submitting order...';
+      showToast('Processing order...');
+
+      const { data, error } = await supabaseClient.rpc('reseller_create_order', {
+        p_reseller_name: activeIdentifier,
+        p_password: activeResellerPass,
+        p_card_quantity: qty,
+        p_notes: userNotes,
+        p_total_amount: tier.total
+      });
+
+      if (error || !data?.success) {
+        showToast(data?.message || 'Failed to submit order.', true);
+        btn.disabled = false;
+        btn.textContent = 'Submit Order & Ping on WhatsApp';
+        return;
+      }
+
+      showToast('Order saved! Opening WhatsApp to notify admin...');
+
+      const partnerDisplayName = data.reseller_name || verifiedResellerName || activeIdentifier;
+      const msg = `Hi review.spread,\nI just placed a card order.\n\nPartner: ${partnerDisplayName}\nQuantity: ${qty} Cards\nTotal Amount: ₹${tier.total}\nNotes: ${userNotes || 'None'}`;
+      window.open(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+
+      document.getElementById('orderNotes').value = '';
+      btn.disabled = false;
+      btn.textContent = 'Submit Order & Ping on WhatsApp';
+
+      await loadPortal();
+      switchTab(tabHistoryBtn, tabHistoryView);
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('ttr_reseller_pass');
+      location.reload();
+    });
+
+    if (activeIdentifier && activeResellerPass) {
+      loadPortal();
+    }
+  </script>
+</body>
+</html>

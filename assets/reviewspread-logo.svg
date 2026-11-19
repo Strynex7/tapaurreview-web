@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" fill="none">
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- NFC Card Icon with Star & Waves -->
+  <g transform="translate(6, 8)">
+    <!-- Card Frame -->
+    <rect x="0" y="4" width="46" height="34" rx="8" fill="#18181B" stroke="url(#goldGradient)" stroke-width="2.5" />
+    <!-- Magnetic / Chip Accent -->
+    <rect x="8" y="14" width="8" height="6" rx="1.5" fill="url(#goldGradient)" opacity="0.9" />
+    <!-- Contactless Waves -->
+    <path d="M24 13 A 14 14 0 0 1 24 29" stroke="url(#goldGradient)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6" />
+    <path d="M29 9 A 20 20 0 0 1 29 33" stroke="url(#goldGradient)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9" />
+    <!-- Review Star -->
+    <path d="M38 12 L39.2 15.5 L43 15.5 L40 17.5 L41.2 21 L38 19 L34.8 21 L36 17.5 L33 15.5 L36.8 15.5 Z" fill="#FCD34D" filter="url(#glow)" />
+  </g>
+
+  <!-- Typography: review.spread -->
+  <text x="66" y="38" font-family="'Inter', system-ui, -apple-system, sans-serif" font-size="25" font-weight="800" fill="#FFFFFF" letter-spacing="-0.5px">
+    review<tspan fill="url(#goldGradient)">.spread</tspan>
+  </text>
+  <!-- Small Subtext Tagline -->
+  <text x="67" y="49" font-family="'Inter', system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="600" fill="#9CA3AF" letter-spacing="2.2px">
+    TAP • REVIEW • GROW
+  </text>
+</svg>

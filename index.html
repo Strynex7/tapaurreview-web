@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>review.spread — Tap. Review. Spread.</title>
+  <meta name="description" content="Contactless NFC smart cards that help customers leave Google Reviews in seconds. One-time purchase, works on iPhone & Android." />
+
+  <!-- Google Fonts: Plus Jakarta Sans + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=6">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+  <!-- Social / SEO -->
+  <meta property="og:title" content="review.spread — Tap. Review. Spread." />
+  <meta property="og:description" content="Contactless NFC smart cards for local businesses to get instant Google reviews." />
+  <meta property="og:image" content="assets/black_card.webp" />
+  <meta name="theme-color" content="#030712">
+  <script src="/js/config.js"></script>
+</head>
+<body>
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+  </div>
+
+  <header id="site-header" class="header" role="banner">
+    <div class="container header-inner">
+      <a class="logo" href="#hero" aria-label="review.spread — Tap. Review. Spread.">
+        <img src="/assets/reviewspread-logo.svg" alt="review.spread" class="logo-img">
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-label="Toggle menu">
+          <span class="hamburger"></span>
+        </button>
+
+        <ul class="nav-list" id="nav-list">
+          <li><a href="#order">Order Cards</a></li>
+          <li><a href="#leaderboard">Leaderboard</a></li>
+          <li><a href="#how-it-works">How it Works</a></li>
+          <li><a href="#benefits">Benefits</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a class="btn btn-cta" id="contact-cta" href="/reseller">Sign In / Portal</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="main">
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">Contactless • Instant • Verified</p>
+          <h1 class="hero-title">Turn Walk-In Customers into <span class="gradient-text">5‑Star Google Reviews</span> in 1 Second.</h1>
+          <p class="hero-lead">Zero typing. Zero search friction. Hand the card, tap any smartphone, and collect authentic reviews instantly.</p>
+          
+          <div class="hero-ctas">
+            <a class="btn btn-primary" id="hero-order" href="#order">Order Cards Now</a>
+            <a class="btn btn-outline" href="#how-it-works">How it Works</a>
+          </div>
+
+          <p class="micro">Ships across India — one-time payment, no monthly fees.</p>
+        </div>
+
+        <div class="hero-banner">
+          <div class="card-showcase card-showcase--hero" aria-label="NFC Review Card previews">
+            <div class="card-showcase-slide">
+              <img src="assets/black_card.webp" alt="Black premium NFC review card held in hand">
+              <strong>Black Premium</strong>
+            </div>
+            <div class="card-showcase-slide">
+              <img src="assets/photo_2026-11-19_19-10-09.jpg" alt="White acrylic NFC review card">
+              <strong>White Classic</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="section stats">
+      <div class="container stats-grid">
+        <div>
+          <span class="stat-number" id="stat-biz" data-target="0">0</span><span>+</span>
+          <p>Businesses Onboarded</p>
+        </div>
+        <div>
+          <span class="stat-number" id="stat-taps" data-target="0">0</span><span>+</span>
+          <p>Number of Taps Till Now</p>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-number" data-target="1">0</span><span class="stat-suffix">s</span>
+          <p>Average Tap Time</p>
+        </div>
+        <div class="stat reveal">
+          <span class="stat-number" data-target="4.9" data-decimal="1">0</span><span class="stat-suffix">★</span>
+          <p>Average Rating</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIRECT ORDER CARD SECTION (ACRYLIC CARDS + SHIPPING) -->
+    <section id="order" class="section order" style="padding-top: 10px;">
+      <div class="container">
+        <h2 class="reveal">Order Your Smart Review Cards</h2>
+        <p class="muted reveal">Acrylic cards only — choose the black or white design. Minimum order: 5 cards at ₹150 per card, plus ₹120 delivery per order.</p>
+
+        <div class="card reveal" style="max-width: 620px; margin: 28px auto 0; background: rgba(24, 20, 17, 0.92); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 20px; padding: 32px 24px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.05);">
+          
+          <form id="homeOrderForm" style="display: grid; gap: 16px; text-align: left;">
+            
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">10-Digit WhatsApp Mobile Number</label>
+              <input type="tel" id="orderCustPhone" placeholder="e.g. 9876543210" maxlength="10" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+              <!-- Live Database Verification Message -->
+              <div id="phoneFeedback" style="font-size: 0.82rem; font-weight: 600; display: none; margin-top: 2px;"></div>
+            </div>
+
+            <div id="groupName" style="display: flex; flex-direction: column; gap: 6px;">
+              <label for="orderCustFirstName" style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">First Name</label>
+              <input type="text" id="orderCustFirstName" placeholder="e.g. Rahul" autocomplete="given-name" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+              <label for="orderCustLastName" style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">Last Name</label>
+              <input type="text" id="orderCustLastName" placeholder="e.g. Sharma" autocomplete="family-name" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+            </div>
+
+            <!-- 4-Digit Security PIN (Hidden if verified reseller) -->
+            <div id="groupPin" style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <label style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">Create 4-Digit Security PIN</label>
+                <span style="font-size: 0.74rem; color: #d4af37; font-weight: 600;">Important</span>
+              </div>
+              <input type="password" id="orderCustPin" placeholder="e.g. 1234" maxlength="4" inputmode="numeric" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+              <p style="font-size: 0.82rem; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 6px; padding: 8px 10px; margin-top: 4px; line-height: 1.4;">
+                🔐 <strong>Password to activate your card:</strong> This 4-digit PIN is the secret password you will use to activate and program your physical review card(s) at <strong>reviewspread.in/activate</strong>.
+              </p>
+            </div>
+
+            <!-- Order pricing -->
+            <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; color: #86efac; line-height: 1.45;">
+              <strong>Both card designs are acrylic only.</strong> Minimum order is 5 cards at ₹150 per card, with a flat ₹120 delivery charge per order.
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">Select Quantity</label>
+              <input type="number" id="orderPackSelect" min="5" step="1" value="5" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+            </div>
+
+            <!-- SEPARATE SHIPPING DETAILS -->
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 14px; display: grid; gap: 14px;">
+              <div style="font-size: 0.88rem; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Delivery Address & Contact
+              </div>
+
+              <!-- Line 1: Receiver Name -->
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">Receiver / Contact Person Name</label>
+                <input type="text" id="orderShipName" placeholder="Name of person receiving the courier" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label for="orderShipHouse" style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">House Number / House Name</label>
+                <input type="text" id="orderShipHouse" placeholder="e.g. House 12 or Rose Villa" autocomplete="address-line1" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+              </div>
+
+              <!-- Street / Building / Shop Address -->
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label for="orderShipAddress" style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">Street / Area / Landmark</label>
+                <input type="text" id="orderShipAddress" placeholder="e.g. MG Road, near City Mall" autocomplete="address-line2" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+              </div>
+
+              <!-- Line 3 & 4: City and 6-Digit Pincode -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <label style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">City / Town</label>
+                  <input type="text" id="orderShipCity" placeholder="e.g. Pune" required style="width: 100%; min-width: 0; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <label style="font-size: 0.84rem; font-weight: 600; color: #cbd5e1;">6-Digit Pincode</label>
+                  <input type="tel" id="orderShipPincode" placeholder="e.g. 411028" maxlength="6" pattern="[0-9]{6}" required style="width: 100%; min-width: 0; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Breakdown & Dynamic UPI QR -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 12px; padding: 16px; margin-top: 4px;">
+              
+              <!-- Effective Rate Breakdown -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.86rem;">
+                <span style="color: #a8a29e;">Acrylic Card Price:</span>
+                <strong id="homeOrderRateNote" style="color: #fbbf24;">₹150/card</strong>
+              </div>
+
+              <!-- Delivery Status Line -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); font-size: 0.86rem;">
+                <span style="color: #a8a29e;">Shipping per order:</span>
+                <strong style="color: #fbbf24;">₹120</strong>
+              </div>
+
+              <!-- Total Payable Amount -->
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+                <div>
+                  <span style="font-size: 0.84rem; font-weight: 700; color: #cbd5e1;">Total Payable Amount:</span>
+                  <div style="font-size: 0.74rem; color: #a8a29e;">Card total plus shipping</div>
+                </div>
+                <div id="homeOrderAmount" style="font-size: 1.6rem; font-weight: 800; color: #d4af37;">₹870</div>
+              </div>
+
+              <!-- UPI QR Display -->
+              <div style="text-align: center; margin-bottom: 12px;">
+                <p style="font-size: 0.78rem; color: #a8a29e; margin-bottom: 6px;">Scan with GPay / PhonePe / Paytm:</p>
+                <div style="background: #fff; padding: 10px; border-radius: 10px; display: inline-block;">
+                  <img id="homeUpiQr" style="width: 150px; height: 150px; display: block;" alt="UPI QR Code" src="">
+                </div>
+                <div style="font-size: 0.76rem; color: #cbd5e1; margin-top: 4px;">UPI ID: <strong id="homeUpiId">7620952720@ybl</strong></div>
+                <p style="font-size: 0.78rem; color: #a8a29e; margin: 8px 0;">Copy the UPI ID, open any payment app, choose UPI ID / UPI address, and paste it to pay the total shown above.</p>
+                <button type="button" id="btnCopyHomeUpiId" class="btn" style="width: 100%; background: #241d18; color: #fbbf24; font-weight: 700; padding: 12px; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; justify-content: center;">
+                  Copy UPI ID
+                </button>
+                <div id="homeUpiCopyFeedback" role="status" style="font-size: 0.78rem; color: #86efac; min-height: 1em;"></div>
+              </div>
+
+              <fieldset style="margin: 14px 0 0; padding: 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.28); border-radius: 10px; color: #cbd5e1; font-size: 0.84rem;">
+                <legend>Did you pay?</legend>
+                <div style="display: flex; gap: 20px; padding-top: 6px;">
+                  <label style="display: inline-flex; align-items: center; gap: 6px;">
+                    <input type="radio" name="homePaymentConfirmed" value="yes" style="accent-color: #d4af37;">
+                    Yes
+                  </label>
+                  <label style="display: inline-flex; align-items: center; gap: 6px;">
+                    <input type="radio" name="homePaymentConfirmed" value="no" checked style="accent-color: #d4af37;">
+                    No
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <button type="submit" id="btnSubmitHomeOrder" class="btn btn-primary" disabled style="width: 100%; padding: 14px; font-size: 1rem; margin-top: 6px;">
+              Confirm Paid Order on WhatsApp
+            </button>
+
+            <div id="homeOrderToast" style="display: none; padding: 10px; border-radius: 8px; font-size: 0.88rem; text-align: center; margin-top: 6px;"></div>
+
+          </form>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="leaderboard" class="section leaderboard-section">
+      <div class="container">
+        <h2 class="reveal">🏆 Monthly Tap Champions</h2>
+        <p class="muted reveal">See which local businesses are driving the most customer engagement this month.</p>
+
+        <div class="leaderboard-filters reveal" id="lb-filters">
+          <button class="filter-btn active" data-cat="All">All Categories</button>
+          <button class="filter-btn" data-cat="Cafes & Restaurants">Cafes & Restaurants</button>
+          <button class="filter-btn" data-cat="Salons & Spas">Salons & Spas</button>
+          <button class="filter-btn" data-cat="Clinics & Healthcare">Clinics & Healthcare</button>
+          <button class="filter-btn" data-cat="Retail Stores">Retail Stores</button>
+          <button class="filter-btn" data-cat="Fitness & Gyms">Fitness & Gyms</button>
+        </div>
+
+        <div class="leaderboard-table-wrapper reveal">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Business Name</th>
+                <th>City</th>
+                <th>Category</th>
+                <th>Taps This Month</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--muted);">Loading monthly champions...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="section how-it-works">
+      <div class="container">
+        <h2 class="reveal">How review.spread Works — 3 Simple Steps</h2>
+        <div class="steps-grid">
+          <article class="step reveal">
+            <div class="step-icon" aria-hidden="true">📳</div>
+            <h3>Tap</h3>
+            <p>Customer taps their iPhone or Android on the card. No apps, no hassle.</p>
+          </article>
+
+          <article class="step reveal">
+            <div class="step-icon" aria-hidden="true">🚀</div>
+            <h3>Launch</h3>
+            <p>A direct Google Review page opens instantly, ready for the customer to share their experience.</p>
+          </article>
+
+          <article class="step reveal">
+            <div class="step-icon" aria-hidden="true">📈</div>
+            <h3>Rank</h3>
+            <p>More authentic reviews → better Google Maps ranking → more local footfall and sales.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section id="benefits" class="section benefits">
+      <div class="container">
+        <h2 class="reveal">Why Local Businesses Choose review.spread</h2>
+        <div class="features-grid">
+          <div class="feature reveal">
+            <div class="feature-icon">📱</div>
+            <h3>Universal Compatibility</h3>
+            <p>Works natively on iPhones & Androids — no apps, no friction.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-icon">💸</div>
+            <h3>No Monthly Fees</h3>
+            <p>One‑time purchase, lifetime validity — no surprise bills.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-icon">💪</div>
+            <h3>Premium Durability</h3>
+            <p>Durable acrylic smart cards built for daily use.</p>
+          </div>
+        </div>
+        <p class="trust reveal">Trusted by cafes, salons, clinics and retail shops across India.</p>
+      </div>
+    </section>
+
+    <!-- ACRYLIC CARD DESIGNS -->
+    <section id="pricing" class="section pricing">
+      <div class="container">
+        <h2 class="reveal">Choose Your NFC Review Card</h2>
+        <p class="pricing-intro muted reveal">Premium acrylic NFC cards — tap to collect Google Reviews, WhatsApp messages &amp; Instagram follows instantly.</p>
+
+        <div class="pricing-products">
+          <!-- Card 1: Black Premium -->
+          <article class="product-panel reveal">
+            <div class="product-copy">
+              <div class="product-panel-heading">
+                <div>
+                  <p class="product-kicker">Most Popular</p>
+                  <h3>Black Premium Card</h3>
+                  <p class="muted">Premium black finish with gold accents. Luxury feel for high-end businesses.</p>
+                </div>
+                <span class="product-size">Black</span>
+              </div>
+              <div class="product-image">
+                <img src="assets/black_card.webp" alt="Black premium NFC review card held in hand">
+              </div>
+              <a class="btn btn-primary" href="#order">Order Black Cards</a>
+            </div>
+          </article>
+
+          <!-- Card 2: White Classic -->
+          <article class="product-panel reveal">
+            <div class="product-copy">
+              <div class="product-panel-heading">
+                <div>
+                  <p class="product-kicker">Classic Design</p>
+                  <h3>White Acrylic Card</h3>
+                  <p class="muted">Clean white finish with blue accents. Perfect for clinics, cafes &amp; salons.</p>
+                </div>
+                <span class="product-size">White</span>
+              </div>
+              <div class="product-image">
+                <img src="assets/photo_2026-11-19_19-10-09.jpg" alt="White acrylic NFC review card closeup">
+              </div>
+              <a class="btn btn-primary" href="#order">Order White Cards</a>
+            </div>
+          </article>
+
+          <!-- Card 3: Bulk Stack -->
+          <article class="product-panel reveal">
+            <div class="product-copy">
+              <div class="product-panel-heading">
+                <div>
+                  <p class="product-kicker">Bulk Reseller Pack</p>
+                  <h3>Multi-Card Stack</h3>
+                  <p class="muted">Order in bulk — 5, 10, 20, or 50 cards at discounted rates. Ideal for resellers &amp; agencies.</p>
+                </div>
+                <span class="product-size">Bulk</span>
+              </div>
+              <div class="product-image">
+                <img src="assets/photo_2026-11-19_19-10-19.jpg" alt="Stack of multiple NFC review cards in bulk">
+              </div>
+              <a class="btn btn-primary" href="#order">Order Bulk Cards</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section testimonials">
+      <div class="container">
+        <h2 class="reveal">Loved by Business Owners</h2>
+        <div class="testimonial-grid">
+          <blockquote class="testimonial reveal">
+            <div class="stars">★★★★★</div>
+            <p>"Our Google reviews doubled in the first month. Customers just tap and go — no more asking twice."</p>
+            <footer>— Priya, Cafe Owner, Pune</footer>
+          </blockquote>
+
+          <blockquote class="testimonial reveal">
+            <div class="stars">★★★★★</div>
+            <p>"Setup took two minutes. Customers can leave a review without searching for our business."</p>
+            <footer>— Arjun, Salon Owner, Pune</footer>
+          </blockquote>
+
+          <blockquote class="testimonial reveal">
+            <div class="stars">★★★★★</div>
+            <p>"Best one-time investment for local visibility. No subscriptions, no hassle."</p>
+            <footer>— Meera, Clinic Manager, Pune</footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY GOOGLE REVIEWS MATTER & TIPS -->
+    <section class="section guide-section">
+      <div class="container">
+        <div class="guide-grid">
+          <div class="guide-card reveal">
+            <h2>Why Google Reviews Matter for Your Business</h2>
+            <ul class="guide-list">
+              <li>
+                <strong>Local Ranking Power:</strong> They decide your local ranking. Businesses with more recent, positive reviews show up higher in Google Maps and the local pack.
+              </li>
+              <li>
+                <strong>The New Word of Mouth:</strong> Most people read reviews before visiting a restaurant, booking a salon, or calling a clinic.
+              </li>
+              <li>
+                <strong>Proof of Life:</strong> A steady stream of fresh reviews tells Google and customers that your business is active and reliable.
+              </li>
+              <li>
+                <strong>Free Customer Feedback:</strong> Reviews show you exactly what customers love — and what to fix next.
+              </li>
+            </ul>
+          </div>
+
+          <div class="guide-card reveal">
+            <h2>Pro Tips for Getting More Reviews</h2>
+            <ul class="guide-list">
+              <li>
+                <strong>Ask at the Right Moment:</strong> Right after a positive interaction, when the customer is happiest — not days later.
+              </li>
+              <li>
+                <strong>Make it Effortless:</strong> Use the NFC smart card instead of asking customers to search for your business on Google Maps.
+              </li>
+              <li>
+                <strong>Personalize the Request:</strong> Mention their visit or order, and explain that authentic reviews genuinely support your business.
+              </li>
+              <li>
+                <strong>Reply to Every Review:</strong> A thoughtful reply shows you care — and prospective customers read your replies too.
+              </li>
+              <li>
+                <strong>Never Buy Reviews:</strong> Incentives violate Google policies. Great service plus a frictionless tap works far better.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section faq">
+      <div class="container">
+        <h2 class="reveal">Frequently Asked Questions</h2>
+        <div class="accordion" id="faq-accordion">
+          <div class="accordion-item reveal">
+            <button id="faq1-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq1">Does it require any special app?</button>
+            <div id="faq1" class="accordion-panel" role="region" aria-labelledby="faq1-toggle">No. review.spread cards work natively with built-in NFC — no app downloads required.</div>
+          </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq2-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq2">Does it work on both iPhone and Android?</button>
+            <div id="faq2" class="accordion-panel" role="region" aria-labelledby="faq2-toggle">Yes. It works on modern iPhones and Android phones that support NFC.</div>
+          </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq3-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq3">Are there any hidden subscriptions?</button>
+            <div id="faq3" class="accordion-panel" role="region" aria-labelledby="faq3-toggle">No. review.spread is a one-time purchase with no monthly fees.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer" class="footer" role="contentinfo">
+    <div class="container footer-grid">
+      <div>
+        <a class="logo-footer" href="#hero" aria-label="review.spread home">
+          <img src="/assets/reviewspread-logo.svg" alt="review.spread" class="logo-img small">
+        </a>
+        <p class="muted">Based in India • Ships nationwide</p>
+      </div>
+
+      <div>
+        <h4>Contact Us</h4>
+        <p class="muted">Questions or ready to order? Reach us directly.</p>
+        <div class="footer-contact-actions">
+          <a class="footer-contact-link whatsapp-link" href="https://wa.me/917620952720" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" title="Chat on WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.07c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.05.17-.19.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.66.78 1.94.92.29.15.48.22.55.34.07.13.07.72-.17 1.4Z"/></svg>
+            <span>WhatsApp</span>
+          </a>
+          <a class="footer-contact-link instagram-link" href="https://www.instagram.com/tapaurreview?dmpr=MXJoZ21lMmU1YXRocA==" target="_blank" rel="noopener" aria-label="Follow Tap Aur Review on Instagram" title="Follow on Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            <span>Instagram</span>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Legal</h4>
+        <p class="muted">© <span id="year"></span> review.spread — All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <a id="floating-wa" class="floating-wa" href="https://wa.me/917620952720" target="_blank" rel="noopener" aria-label="Chat with review.spread on WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.07c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.05.17-.19.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.66.78 1.94.92.29.15.48.22.55.34.07.13.07.72-.17 1.4Z"/></svg>
+    <span class="wa-pulse" aria-hidden="true"></span>
+  </a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js" defer></script>
+
+  <!-- DIRECT ORDER PROCESSING SCRIPT -->
+  <script>
+    (function() {
+      const ADMIN_UPI_ID = window.CONFIG?.ADMIN_UPI_ID || '';
+      const ADMIN_PHONE = window.CONFIG?.ADMIN_PHONE || '';
+
+      const MIN_ORDER_QUANTITY = window.CONFIG?.MIN_ORDER_QTY || 5;
+      const CARD_PRICE = window.CONFIG?.CARD_PRICE || 150;
+      const SHIPPING_FEE = window.CONFIG?.SHIPPING_FEE || 120;
+
+      const supabaseUrl = window.CONFIG?.SUPABASE_URL || '';
+      const supabaseKey = window.CONFIG?.SUPABASE_KEY || '';
+      const localSupabase = (window.supabase && supabaseUrl && supabaseKey) ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+
+      const groupName = document.getElementById('groupName');
+      const groupPin = document.getElementById('groupPin');
+      const custFirstName = document.getElementById('orderCustFirstName');
+      const custLastName = document.getElementById('orderCustLastName');
+      const custPin = document.getElementById('orderCustPin');
+      const custPhone = document.getElementById('orderCustPhone');
+      const phoneFeedback = document.getElementById('phoneFeedback');
+
+      // Structured Shipping Inputs
+      const shipNameInput = document.getElementById('orderShipName');
+      const shipHouseInput = document.getElementById('orderShipHouse');
+      const shipAddressInput = document.getElementById('orderShipAddress');
+      const shipCityInput = document.getElementById('orderShipCity');
+      const shipPincodeInput = document.getElementById('orderShipPincode');
+
+      const packSelect = document.getElementById('orderPackSelect');
+      const amountEl = document.getElementById('homeOrderAmount');
+      const rateNoteEl = document.getElementById('homeOrderRateNote');
+      const qrEl = document.getElementById('homeUpiQr');
+      const copyUpiButton = document.getElementById('btnCopyHomeUpiId');
+      const copyUpiFeedback = document.getElementById('homeUpiCopyFeedback');
+      const paymentOptions = document.querySelectorAll('input[name="homePaymentConfirmed"]');
+      const form = document.getElementById('homeOrderForm');
+      const submitBtn = document.getElementById('btnSubmitHomeOrder');
+      const toast = document.getElementById('homeOrderToast');
+
+      let isPartnerVerified = false;
+      let verifiedPartnerName = '';
+      let isShipNameManuallyEdited = false;
+      let partnerLookupStatus = 'incomplete';
+      let verifiedPhone = '';
+      let partnerLookupSequence = 0;
+      let lastQuotedTotal = null;
+
+      function getOrderTotal(quantity) {
+        return quantity * CARD_PRICE + SHIPPING_FEE;
+      }
+
+      function getCustomerName() {
+        return `${custFirstName.value.trim()} ${custLastName.value.trim()}`.trim();
+      }
+
+      function hasConfirmedPayment() {
+        return document.querySelector('input[name="homePaymentConfirmed"]:checked')?.value === 'yes';
+      }
+
+      function selectPaymentNo() {
+        const noOption = document.querySelector('input[name="homePaymentConfirmed"][value="no"]');
+        if (noOption) noOption.checked = true;
+      }
+
+      function updatePricing() {
+        const qty = Number(packSelect.value);
+        if (!Number.isInteger(qty) || qty < MIN_ORDER_QUANTITY) {
+          amountEl.textContent = '—';
+          qrEl.removeAttribute('src');
+          lastQuotedTotal = null;
+          selectPaymentNo();
+          updateSubmitAvailability();
+          return;
+        }
+
+        const total = getOrderTotal(qty);
+        if (lastQuotedTotal !== null && lastQuotedTotal !== total) {
+          selectPaymentNo();
+        }
+        lastQuotedTotal = total;
+        amountEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+        rateNoteEl.textContent = `₹${CARD_PRICE}/card`;
+
+        const brand = window.CONFIG?.BRAND_NAME || 'review.spread';
+        const nameVal = verifiedPartnerName || getCustomerName() || 'Customer';
+        const note = encodeURIComponent(`${brand} ${qty} Cards - ${nameVal}`);
+        const upiUri = `upi://pay?pa=${ADMIN_UPI_ID}&pn=${encodeURIComponent(brand)}&am=${total}&cu=INR&tn=${note}`;
+        qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=2&data=${encodeURIComponent(upiUri)}`;
+        updateSubmitAvailability();
+      }
+
+      function updateSubmitAvailability() {
+        const partnerStatusReady = partnerLookupStatus === 'new' || partnerLookupStatus === 'registered';
+        submitBtn.disabled = !hasConfirmedPayment() || !partnerStatusReady;
+      }
+
+      function showNewCustomerFields() {
+        groupPin.style.display = 'flex';
+        custPin.setAttribute('required', 'true');
+        groupName.style.display = 'flex';
+        custFirstName.setAttribute('required', 'true');
+        custLastName.setAttribute('required', 'true');
+      }
+
+      function showRegisteredPartner(name) {
+        groupPin.style.display = 'none';
+        custPin.removeAttribute('required');
+        custPin.value = '';
+        groupName.style.display = 'none';
+        custFirstName.removeAttribute('required');
+        custLastName.removeAttribute('required');
+        verifiedPartnerName = name;
+        isPartnerVerified = true;
+        if (!isShipNameManuallyEdited) {
+          shipNameInput.value = name;
+        }
+      }
+
+      async function validatePartnerPhone() {
+        const requestSequence = ++partnerLookupSequence;
+        const rawDigits = custPhone.value.replace(/\D/g, '');
+        const cleanPhone = rawDigits.slice(-10);
+        const wasRegistered = partnerLookupStatus === 'registered';
+        if (wasRegistered) {
+          custFirstName.value = '';
+          custLastName.value = '';
+          verifiedPartnerName = '';
+          if (!isShipNameManuallyEdited) shipNameInput.value = '';
+        }
+        isPartnerVerified = false;
+        verifiedPhone = '';
+        if (rawDigits.length !== 10) {
+          partnerLookupStatus = 'incomplete';
+          showNewCustomerFields();
+          phoneFeedback.style.display = 'block';
+          phoneFeedback.style.color = '#94a3b8';
+          phoneFeedback.textContent = 'Enter a 10-digit number to check for an existing partner account.';
+          updateSubmitAvailability();
+          return;
+        }
+
+        partnerLookupStatus = 'checking';
+        showNewCustomerFields();
+        updateSubmitAvailability();
+        phoneFeedback.style.display = 'block';
+        phoneFeedback.style.color = '#38bdf8';
+        phoneFeedback.textContent = 'Checking partner records...';
+
+        let result;
+        try {
+          result = await localSupabase.rpc('check_reseller_phone', {
+            p_phone: cleanPhone
+          });
+        } catch (error) {
+          if (requestSequence !== partnerLookupSequence) return;
+          isPartnerVerified = false;
+          verifiedPartnerName = '';
+          verifiedPhone = '';
+          partnerLookupStatus = 'error';
+          phoneFeedback.style.color = '#f87171';
+          phoneFeedback.textContent = 'Could not check partner records. Please try entering the number again.';
+          updateSubmitAvailability();
+          return;
+        }
+
+        if (requestSequence !== partnerLookupSequence) return;
+
+        const { data, error } = result;
+        if (error || typeof data?.exists !== 'boolean') {
+          isPartnerVerified = false;
+          verifiedPartnerName = '';
+          verifiedPhone = '';
+          partnerLookupStatus = 'error';
+          phoneFeedback.style.color = '#f87171';
+          phoneFeedback.textContent = error?.message || 'Could not verify this number. Please try again.';
+        } else if (data.exists) {
+          if (typeof data.name !== 'string' || !data.name.trim()) {
+            isPartnerVerified = false;
+            verifiedPartnerName = '';
+            verifiedPhone = '';
+            partnerLookupStatus = 'error';
+            phoneFeedback.style.color = '#f87171';
+            phoneFeedback.textContent = 'Partner account found, but its name could not be loaded. Please contact support.';
+          } else {
+            partnerLookupStatus = 'registered';
+            verifiedPhone = cleanPhone;
+            showRegisteredPartner(data.name.trim());
+            phoneFeedback.style.color = '#4ade80';
+            phoneFeedback.textContent = `✓ Partner account found for ${data.name}. Your saved account will be used; no new PIN is needed.`;
+            updatePricing();
+          }
+        } else {
+          verifiedPartnerName = '';
+          partnerLookupStatus = 'new';
+          showNewCustomerFields();
+          phoneFeedback.style.color = '#fbbf24';
+          phoneFeedback.textContent = 'No partner account found. Enter your name and create a 4-digit activation PIN.';
+        }
+        updateSubmitAvailability();
+      }
+
+      custPhone.addEventListener('input', validatePartnerPhone);
+
+      function handleCustomerNameInput() {
+        updatePricing();
+        if (partnerLookupStatus !== 'registered' && !isShipNameManuallyEdited) {
+          shipNameInput.value = getCustomerName();
+        }
+      }
+
+      custFirstName.addEventListener('input', handleCustomerNameInput);
+      custLastName.addEventListener('input', handleCustomerNameInput);
+
+      shipNameInput.addEventListener('input', () => {
+        isShipNameManuallyEdited = true;
+      });
+
+      packSelect.addEventListener('input', updatePricing);
+      paymentOptions.forEach((option) => option.addEventListener('change', updateSubmitAvailability));
+      copyUpiButton.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(ADMIN_UPI_ID);
+          } else {
+            const input = document.createElement('textarea');
+            input.value = ADMIN_UPI_ID;
+            input.setAttribute('readonly', '');
+            input.style.position = 'fixed';
+            input.style.opacity = '0';
+            document.body.appendChild(input);
+            input.select();
+            const copied = document.execCommand('copy');
+            input.remove();
+            if (!copied) throw new Error('Clipboard copy was rejected.');
+          }
+          copyUpiFeedback.textContent = 'UPI ID copied. Paste it into your payment app.';
+        } catch (error) {
+          copyUpiFeedback.textContent = `Could not copy automatically. Please copy this UPI ID manually: ${ADMIN_UPI_ID}`;
+        }
+      });
+      updatePricing();
+
+      // Submit Direct Order
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const isExisting = partnerLookupStatus === 'registered';
+        const name = isExisting ? verifiedPartnerName : getCustomerName();
+        const phone = custPhone.value.trim().replace(/\D/g, '');
+        const pin = custPin.value.trim();
+        const qty = Number(packSelect.value);
+
+        const shipName = shipNameInput.value.trim();
+        const shipHouse = shipHouseInput.value.trim();
+        const shipAddress = shipAddressInput.value.trim();
+        const shipCity = shipCityInput.value.trim();
+        const shipPincode = shipPincodeInput.value.trim().replace(/\D/g, '');
+
+        if (!Number.isInteger(qty) || qty < MIN_ORDER_QUANTITY) {
+          showMsg(`Please order at least ${MIN_ORDER_QUANTITY} cards.`, true);
+          return;
+        }
+
+        if (!hasConfirmedPayment()) {
+          showMsg('Please complete the UPI payment and confirm it before placing your order.', true);
+          return;
+        }
+
+        const total = getOrderTotal(qty);
+
+        if (!/^\d{10}$/.test(phone)) {
+          showMsg('Please enter a valid 10-digit mobile number.', true);
+          return;
+        }
+
+        if (partnerLookupStatus === 'checking' || partnerLookupStatus === 'incomplete' || partnerLookupStatus === 'error') {
+          showMsg('Please wait for the phone number partner check to complete successfully.', true);
+          return;
+        }
+
+        if (isExisting && (!isPartnerVerified || verifiedPhone !== phone)) {
+          showMsg('The registered partner check does not match this phone number. Please check the number again.', true);
+          return;
+        }
+
+        if (!isExisting && (pin.length !== 4 || !/^\d{4}$/.test(pin))) {
+          showMsg('PIN must be exactly 4 digits.', true);
+          return;
+        }
+
+        if (!shipName) {
+          showMsg('Please enter the receiver / contact person name for delivery.', true);
+          return;
+        }
+
+        if (!shipHouse) {
+          showMsg('Please enter your house number or house name.', true);
+          return;
+        }
+
+        if (!shipAddress) {
+          showMsg('Please enter your street, area, or landmark.', true);
+          return;
+        }
+
+        if (!shipCity) {
+          showMsg('Please enter your city / town.', true);
+          return;
+        }
+
+        if (shipPincode.length !== 6 || !/^\d{6}$/.test(shipPincode)) {
+          showMsg('Please enter a valid 6-digit delivery pincode.', true);
+          return;
+        }
+
+        const combinedShippingAddress = `${shipName}, ${shipHouse}, ${shipAddress}, ${shipCity} - ${shipPincode}`;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing order...';
+        showMsg('Placing your order...');
+
+        let orderResult;
+        try {
+          orderResult = await localSupabase.rpc('place_direct_order', {
+            p_is_existing: isExisting,
+            p_name: name,
+            p_phone: phone,
+            p_pin: isExisting ? '' : pin,
+            p_quantity: qty,
+            p_notes: combinedShippingAddress,
+            p_total_amount: total
+          });
+        } catch (error) {
+          submitBtn.textContent = 'Confirm Paid Order on WhatsApp';
+          updateSubmitAvailability();
+          showMsg('Could not submit the order due to a connection problem. Please try again.', true);
+          return;
+        }
+
+        updateSubmitAvailability();
+        submitBtn.textContent = 'Confirm Paid Order on WhatsApp';
+
+        const { data, error } = orderResult;
+        if (error || !data?.success) {
+          showMsg(data?.message || error?.message || 'Failed to place order.', true);
+          return;
+        }
+
+        showMsg('Order received! Opening WhatsApp to confirm payment...');
+
+        const partnerName = data.reseller_name || name || 'Customer';
+        const brand = window.CONFIG?.BRAND_NAME || 'review.spread';
+        const waMsg = `Hi ${brand},\nI just placed an order!\n\nPartner/Name: ${partnerName}\nPhone: ${phone}\nQuantity: ${qty} acrylic cards (₹${CARD_PRICE}/card)\nDelivery: ₹${SHIPPING_FEE} per order\nTotal Amount: ₹${total}\n\nShipping Address:\nReceiver: ${shipName}\nHouse Number / Name: ${shipHouse}\nStreet / Area / Landmark: ${shipAddress}\nCity: ${shipCity}\nPincode: ${shipPincode}\n\nPayment completed via UPI. Please confirm shipment.`;
+        window.open(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(waMsg)}`, '_blank', 'noopener');
+      });
+
+      function showMsg(msg, isErr = false) {
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        toast.style.border = isErr ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(34, 197, 94, 0.4)';
+        toast.style.background = isErr ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.15)';
+        toast.style.color = isErr ? '#fca5a5' : '#86efac';
+      }
+    })();
+  </script>
+</body>
+</html>

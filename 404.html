@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect &amp; Review</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      background: #0a0908;
+      background-image:
+        radial-gradient(ellipse 90% 60% at 50% -15%, rgba(245,158,11,0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 70% 50% at 85% 90%, rgba(217,119,6,0.08) 0%, transparent 55%);
+      color: #fafaf9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .landing-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(24, 20, 17, 0.88);
+      border: 1px solid rgba(212, 175, 55, 0.32);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 34px 22px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(245, 158, 11, 0.06);
+    }
+    .biz-name {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin: 0 0 8px 0;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .biz-location {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin: 0 0 32px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .biz-location::before { content: "📍"; font-size: 0.85rem; }
+    .actions-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 20px;
+      border-radius: 14px;
+      font-size: 1.02rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .action-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .action-btn:active { transform: scale(0.98); }
+    .btn-google {
+      background: linear-gradient(135deg, #d4af37 0%, #b89528 100%);
+      color: #0b0f19;
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25);
+    }
+    .btn-whatsapp {
+      background: #25D366;
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.25);
+    }
+    .btn-whatsapp-group {
+      background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(18, 140, 126, 0.25);
+    }
+    .btn-instagram {
+      background: linear-gradient(45deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(220, 39, 67, 0.25);
+    }
+    .btn-icon {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+    .spinner-ring {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(245,158,11,0.15);
+      border-top-color: #f59e0b;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .footer-note {
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: #374151;
+      letter-spacing: 0.01em;
+    }
+    .footer-note a {
+      color: #f59e0b;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+  <script src="/js/config.js"></script>
+</head>
+<body>
+
+  <div class="landing-card" id="cardContainer">
+    <!-- Loading State -->
+    <div id="loadingView" class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <span>Connecting to card...</span>
+    </div>
+
+    <!-- Ready State (Micro-Landing Page) -->
+    <div id="bizView" style="display: none;">
+      <h1 class="biz-name" id="bizName">Business Name</h1>
+      <p class="biz-location" id="bizLocation"></p>
+
+      <div class="actions-stack">
+        <!-- Google Review CTA (Hidden by default, shown if destination_url exists) -->
+        <a id="btnGoogle" class="action-btn btn-google" href="#" target="_blank" rel="noopener" style="display: none;">
+          <svg class="btn-icon" viewBox="0 0 24 24">
+            <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+          </svg>
+          Leave a Google Review
+        </a>
+
+        <!-- WhatsApp CTA -->
+        <a id="btnWhatsapp" class="action-btn btn-whatsapp" href="#" target="_blank" rel="noopener" style="display: none;">
+          <svg class="btn-icon" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+          </svg>
+          Connect on WhatsApp
+        </a>
+
+        <!-- WhatsApp Group CTA -->
+        <a id="btnWhatsappGroup" class="action-btn btn-whatsapp-group" href="#" target="_blank" rel="noopener" style="display: none;">
+          <svg class="btn-icon" viewBox="0 0 24 24">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          </svg>
+          Join WhatsApp Group
+        </a>
+
+        <!-- Instagram CTA -->
+        <a id="btnInstagram" class="action-btn btn-instagram" href="#" target="_blank" rel="noopener" style="display: none;">
+          <svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          Follow on Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const supabaseUrl = window.CONFIG?.SUPABASE_URL || '';
+    const supabaseKey = window.CONFIG?.SUPABASE_KEY || '';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function routeTap() {
+      const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+      if (!rawPath) {
+        window.location.replace('/');
+        return;
+      }
+
+      const segments = rawPath.split('/');
+      let cardCode = null;
+
+      if (segments[0] === 'r' && segments[1] && /^\d+$/.test(segments[1])) {         cardCode = parseInt(segments[1], 10);       } else if (/^\d+$/.test(segments[0])) {
+        cardCode = parseInt(segments[0], 10);
+      }
+
+      let bizData = null;
+
+      if (cardCode !== null) {
+        const { data, error } = await supabaseClient.rpc('get_card_details', { p_code: cardCode });
+
+        // Check if card has AT LEAST one destination
+        const hasAnyLink = data?.destination_url || data?.whatsapp_url || data?.instagram_url || data?.whatsapp_group_url;
+
+        if (error || !data || data.status === 'unregistered' || !hasAnyLink) {
+          window.location.replace(`/activate?code=${cardCode}`);
+          return;
+        }
+
+        bizData = data;
+
+        try {
+          await supabaseClient.rpc('increment_tap', {
+            client_slug: 'card-' + cardCode,
+            client_platform: 'google'
+          });
+        } catch (err) {
+          console.error('Tap count error:', err);
+        }
+      } else {
+        const { data, error } = await supabaseClient
+          .from('clients')
+          .select('business_name, city_location, category, destination_url, whatsapp_url, instagram_url, whatsapp_group_url')
+          .eq('slug', rawPath)
+          .eq('platform', 'google')
+          .single();
+
+        const hasAnyLink = data?.destination_url || data?.whatsapp_url || data?.instagram_url || data?.whatsapp_group_url;
+
+        if (error || !hasAnyLink) {
+          document.getElementById('cardContainer').innerHTML = '<h2>Business link not found.</h2>';
+          return;
+        }
+
+        bizData = data;
+
+        try {
+          await supabaseClient.rpc('increment_tap', {
+            client_slug: rawPath,
+            client_platform: 'google'
+          });
+        } catch (err) {
+          console.error('Tap count error:', err);
+        }
+      }
+
+      // Render business info
+      const bizTitleEl = document.getElementById('bizName');
+      bizTitleEl.textContent = bizData.business_name || 'Our Channels';
+      if (bizData.business_name) {
+        document.title = `${bizData.business_name} — Connect & Review`;
+      }
+      document.getElementById('bizLocation').textContent = bizData.city_location || '';
+
+      // Conditional Google Review Button
+      if (bizData.destination_url) {
+        const googleBtn = document.getElementById('btnGoogle');
+        googleBtn.href = bizData.destination_url;
+        googleBtn.style.display = 'flex';
+      }
+
+      // Conditional WhatsApp Button
+      if (bizData.whatsapp_url) {
+        const waBtn = document.getElementById('btnWhatsapp');
+        waBtn.href = bizData.whatsapp_url;
+        waBtn.style.display = 'flex';
+      }
+
+      // Conditional WhatsApp Group Button
+      if (bizData.whatsapp_group_url) {
+        let groupUrl = bizData.whatsapp_group_url.trim();
+        if (!/^https?:\/\//i.test(groupUrl)) {
+          groupUrl = 'https://' + groupUrl;
+        }
+        const waGroupBtn = document.getElementById('btnWhatsappGroup');
+        waGroupBtn.href = groupUrl;
+        waGroupBtn.style.display = 'flex';
+      }
+
+      // Conditional Instagram Button
+      if (bizData.instagram_url) {
+        const igBtn = document.getElementById('btnInstagram');
+        igBtn.href = bizData.instagram_url;
+        igBtn.style.display = 'flex';
+      }
+
+      // Invisible triple-tap on business name
+      let tapCount = 0;
+      let tapTimer = null;
+      bizTitleEl.addEventListener('click', () => {
+        tapCount++;
+        clearTimeout(tapTimer);
+
+        if (tapCount === 3) {
+          if (cardCode !== null) {
+            window.location.href = `/activate?code=${cardCode}`;
+          } else {
+            window.location.href = '/activate';
+          }
+          return;
+        }
+
+        tapTimer = setTimeout(() => {
+          tapCount = 0;
+        }, 1200);
+      });
+
+      document.getElementById('loadingView').style.display = 'none';
+      document.getElementById('bizView').style.display = 'block';
+    }
+
+    routeTap();
+  </script>
+</body>
+</html>
