@@ -206,22 +206,73 @@
       let bizData = null;
 
       if (cardCode !== null) {
-        const { data, error } = await supabaseClient.rpc('get_card_details', { p_code: cardCode });
+        // Step 1: Direct query from clients table
+        let cardData = null;
+        try {
+          const { data: directClient, error: directErr } = await supabaseClient
+            .from('clients')
+            .select('*')
+            .eq('card_code', cardCode)
+            .maybeSingle();
 
-        if (error) {
-          console.error('Error fetching card:', error);
-          document.getElementById('cardContainer').innerHTML = `
-            <div style="text-align: center; padding: 24px 16px;">
-              <h2 style="font-size: 1.3rem; color: #f87171; margin-bottom: 8px;">Unable to Connect</h2>
-              <p style="color: #a8a29e; font-size: 0.92rem;">Could not load card details. Please try again.</p>
-              <a href="/" style="display: inline-block; margin-top: 18px; color: #f59e0b; text-decoration: none; font-weight: 600;">← Back to Home</a>
-            </div>
-          `;
-          return;
+          if (!directErr && directClient) {
+            cardData = directClient;
+          }
+        } catch (err) {
+          console.warn('Direct clients query error:', err);
         }
 
-        // If card is not allotted by admin, deny access immediately
-        if (data?.status === 'unallotted') {
+        // Step 2: Fallback to get_card_details RPC if direct query didn't return data
+        if (!cardData) {
+          try {
+            const { data: rpcData } = await supabaseClient.rpc('get_card_details', { p_code: cardCode });
+            if (rpcData && rpcData.status !== 'unallotted') {
+              cardData = rpcData;
+            } else if (rpcData && rpcData.status === 'unallotted') {
+              cardData = { status: 'unallotted' };
+            }
+          } catch (err) {
+            console.warn('RPC fallback error:', err);
+          }
+        }
+
+        // Check if card has AT LEAST one active destination link
+        const hasAnyLink = !!(
+          (cardData?.destination_url && cardData.destination_url.trim()) ||
+          (cardData?.whatsapp_url && cardData.whatsapp_url.trim()) ||
+          (cardData?.instagram_url && cardData.instagram_url.trim()) ||
+          (cardData?.whatsapp_group_url && cardData.whatsapp_group_url.trim())
+        );
+
+        // CASE 1: Card is ACTIVE or has ANY link configured -> SHOW LANDING PAGE DIRECTLY!
+        // ZERO PASSWORD, ZERO PIN, ZERO REDIRECT!
+        if (cardData && (cardData.status === 'active' || hasAnyLink)) {
+          bizData = cardData;
+        } else if (cardData && cardData.status === 'unregistered' && cardData.reseller_name) {
+          // CASE 2: Card is in an allotted reseller batch, but not configured yet -> redirect partner to setup
+          window.location.replace(`/activate?code=${cardCode}`);
+          return;
+        } else {
+          // Check batches table
+          let isBatchAllotted = false;
+          try {
+            const { data: bData } = await supabaseClient
+              .from('batches')
+              .select('reseller_name')
+              .lte('range_start', cardCode)
+              .gte('range_end', cardCode)
+              .maybeSingle();
+            if (bData && bData.reseller_name) {
+              isBatchAllotted = true;
+            }
+          } catch (e) {}
+
+          if (isBatchAllotted) {
+            window.location.replace(`/activate?code=${cardCode}`);
+            return;
+          }
+
+          // CASE 3: Card NOT allotted by admin -> Access denied
           document.getElementById('cardContainer').innerHTML = `
             <div style="text-align: center; padding: 24px 16px;">
               <div style="font-size: 3rem; margin-bottom: 12px;">🚫</div>
@@ -230,18 +281,6 @@
               <a href="/" style="display: inline-block; margin-top: 18px; color: #f59e0b; text-decoration: none; font-weight: 600;">← Back to Home</a>
             </div>
           `;
-          return;
-        }
-
-        // Check if card has AT LEAST one active destination link
-        const hasAnyLink = !!(data?.destination_url || data?.whatsapp_url || data?.instagram_url || data?.whatsapp_group_url);
-
-        // If card is active or has links configured, show business landing page directly (NO PASSWORD)
-        if (data?.status === 'active' || hasAnyLink) {
-          bizData = data;
-        } else {
-          // Card is in an allotted reseller batch, but not configured yet -> redirect partner to setup
-          window.location.replace(`/activate?code=${cardCode}`);
           return;
         }
 
