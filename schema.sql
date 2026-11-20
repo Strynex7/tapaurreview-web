@@ -95,26 +95,50 @@ CREATE OR REPLACE FUNCTION public.get_card_details(p_code INTEGER)
 RETURNS JSON AS $$
 DECLARE
     v_card RECORD;
+    v_is_allotted BOOLEAN;
 BEGIN
+    -- 1. Check card in clients table
     SELECT * INTO v_card FROM public.clients WHERE card_code = p_code LIMIT 1;
-    IF NOT FOUND THEN
+
+    -- 2. If card is active or has business links configured -> Return immediately for direct display (NO PASSWORD)
+    IF v_card IS NOT NULL AND (
+        LOWER(TRIM(COALESCE(v_card.status, ''))) = 'active' OR
+        NULLIF(TRIM(COALESCE(v_card.destination_url, '')), '') IS NOT NULL OR
+        NULLIF(TRIM(COALESCE(v_card.whatsapp_url, '')), '') IS NOT NULL OR
+        NULLIF(TRIM(COALESCE(v_card.instagram_url, '')), '') IS NOT NULL OR
+        NULLIF(TRIM(COALESCE(v_card.whatsapp_group_url, '')), '') IS NOT NULL
+    ) THEN
+        RETURN json_build_object(
+            'status', 'active',
+            'card_code', v_card.card_code,
+            'business_name', COALESCE(v_card.business_name, ''),
+            'city_location', COALESCE(v_card.city_location, ''),
+            'category', COALESCE(v_card.category, 'Other'),
+            'destination_url', COALESCE(v_card.destination_url, ''),
+            'whatsapp_url', COALESCE(v_card.whatsapp_url, ''),
+            'whatsapp_group_url', COALESCE(v_card.whatsapp_group_url, ''),
+            'instagram_url', COALESCE(v_card.instagram_url, '')
+        );
+    END IF;
+
+    -- 3. If not active, check if card is allotted in batches or clients
+    SELECT EXISTS (
+        SELECT 1 FROM public.batches WHERE p_code BETWEEN range_start AND range_end
+        UNION
+        SELECT 1 FROM public.clients WHERE card_code = p_code AND reseller_name IS NOT NULL AND length(trim(reseller_name)) > 0
+    ) INTO v_is_allotted;
+
+    IF v_is_allotted THEN
         RETURN json_build_object(
             'status', 'unregistered',
             'card_code', p_code
         );
+    ELSE
+        RETURN json_build_object(
+            'status', 'unallotted',
+            'card_code', p_code
+        );
     END IF;
-
-    RETURN json_build_object(
-        'card_code', v_card.card_code,
-        'business_name', v_card.business_name,
-        'city_location', v_card.city_location,
-        'category', v_card.category,
-        'destination_url', v_card.destination_url,
-        'whatsapp_url', v_card.whatsapp_url,
-        'whatsapp_group_url', v_card.whatsapp_group_url,
-        'instagram_url', v_card.instagram_url,
-        'status', v_card.status
-    );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -261,43 +285,80 @@ CREATE OR REPLACE FUNCTION public.verify_and_get_card(p_code INTEGER, p_password
 RETURNS JSON AS $$
 DECLARE
     v_card RECORD;
+    v_reseller_name TEXT;
     v_reseller RECORD;
 BEGIN
-    SELECT * INTO v_card FROM public.clients WHERE card_code = p_code;
-    
-    -- Verify PIN from reseller or owner
-    IF v_card.reseller_name IS NOT NULL THEN
-        SELECT * INTO v_reseller FROM public.resellers WHERE name = v_card.reseller_name;
-        IF v_reseller.pin <> p_password AND COALESCE(v_card.owner_pin, '') <> p_password THEN
-            RETURN json_build_object('success', false, 'message', 'Invalid PIN/Password for Card #' || p_code);
-        END IF;
+    -- 1. Check if card exists in clients table
+    SELECT * INTO v_card FROM public.clients WHERE card_code = p_code LIMIT 1;
+
+    -- 2. Determine which reseller owns/is allotted this card:
+    IF v_card IS NOT NULL AND v_card.reseller_name IS NOT NULL AND length(trim(v_card.reseller_name)) > 0 THEN
+        v_reseller_name := trim(v_card.reseller_name);
     ELSE
-        -- Unassigned card, allow default PIN or check if matching any approved partner
-        SELECT * INTO v_reseller FROM public.resellers WHERE pin = p_password AND status = 'approved' LIMIT 1;
-        IF NOT FOUND AND p_password <> '1234' THEN
-            RETURN json_build_object('success', false, 'message', 'Card #' || p_code || ' PIN verification failed.');
-        END IF;
+        -- Check if card falls inside an allotted batch range in public.batches
+        SELECT reseller_name INTO v_reseller_name 
+        FROM public.batches 
+        WHERE p_code BETWEEN range_start AND range_end 
+        ORDER BY id DESC LIMIT 1;
     END IF;
 
+    -- 3. If card is neither in clients with reseller_name NOR in any assigned batch:
+    -- IT HAS NOT BEEN ALLOTTED BY ADMIN! Access Denied!
+    IF v_reseller_name IS NULL OR length(trim(v_reseller_name)) = 0 THEN
+        RETURN json_build_object(
+            'success', false,
+            'message', 'Card #' || p_code || ' has not been allotted by admin. Access denied.'
+        );
+    END IF;
+
+    -- 4. Find the specific allotted reseller in public.resellers
+    SELECT * INTO v_reseller FROM public.resellers WHERE name = v_reseller_name LIMIT 1;
+    IF NOT FOUND THEN
+        RETURN json_build_object(
+            'success', false,
+            'message', 'Allotted partner record for Card #' || p_code || ' not found.'
+        );
+    END IF;
+
+    -- 5. Strict PIN check: Must match the allotted reseller's PIN (or owner_pin if card was previously set)
+    IF TRIM(v_reseller.pin) <> TRIM(p_password) AND (v_card IS NULL OR TRIM(COALESCE(v_card.owner_pin, '')) <> TRIM(p_password)) THEN
+        RETURN json_build_object(
+            'success', false,
+            'message', 'Invalid PIN for Card #' || p_code || '. Please enter the correct partner security PIN.'
+        );
+    END IF;
+
+    -- 6. Card is valid and PIN matches!
+    -- If card row doesn't exist in clients table yet, it's a fresh unregistered card in the reseller's batch!
     IF v_card IS NULL THEN
         RETURN json_build_object(
             'success', true,
             'status', 'unregistered',
-            'card_code', p_code
+            'card_code', p_code,
+            'reseller_name', v_reseller_name,
+            'business_name', '',
+            'city_location', '',
+            'category', 'Other',
+            'destination_url', '',
+            'whatsapp_url', '',
+            'whatsapp_group_url', '',
+            'instagram_url', ''
         );
     END IF;
 
+    -- If card exists in clients table, return its saved data:
     RETURN json_build_object(
         'success', true,
         'status', v_card.status,
         'card_code', v_card.card_code,
-        'business_name', v_card.business_name,
-        'city_location', v_card.city_location,
-        'category', v_card.category,
-        'destination_url', v_card.destination_url,
-        'whatsapp_url', v_card.whatsapp_url,
-        'whatsapp_group_url', v_card.whatsapp_group_url,
-        'instagram_url', v_card.instagram_url
+        'reseller_name', v_reseller_name,
+        'business_name', COALESCE(v_card.business_name, ''),
+        'city_location', COALESCE(v_card.city_location, ''),
+        'category', COALESCE(v_card.category, 'Other'),
+        'destination_url', COALESCE(v_card.destination_url, ''),
+        'whatsapp_url', COALESCE(v_card.whatsapp_url, ''),
+        'whatsapp_group_url', COALESCE(v_card.whatsapp_group_url, ''),
+        'instagram_url', COALESCE(v_card.instagram_url, '')
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -320,18 +381,55 @@ CREATE OR REPLACE FUNCTION public.register_card(
     p_whatsapp_group_url TEXT DEFAULT NULL
 )
 RETURNS JSON AS $$
+DECLARE
+    v_card RECORD;
+    v_reseller_name TEXT;
+    v_reseller RECORD;
 BEGIN
+    -- 1. Check if card exists in clients table
+    SELECT * INTO v_card FROM public.clients WHERE card_code = p_code LIMIT 1;
+
+    -- 2. Determine allotted reseller
+    IF v_card IS NOT NULL AND v_card.reseller_name IS NOT NULL AND length(trim(v_card.reseller_name)) > 0 THEN
+        v_reseller_name := trim(v_card.reseller_name);
+    ELSE
+        SELECT reseller_name INTO v_reseller_name 
+        FROM public.batches 
+        WHERE p_code BETWEEN range_start AND range_end 
+        ORDER BY id DESC LIMIT 1;
+    END IF;
+
+    -- 3. If not allotted, reject
+    IF v_reseller_name IS NULL OR length(trim(v_reseller_name)) = 0 THEN
+        RETURN json_build_object(
+            'success', false,
+            'message', 'Cannot register: Card #' || p_code || ' has not been allotted by admin.'
+        );
+    END IF;
+
+    -- 4. Verify reseller and PIN match
+    SELECT * INTO v_reseller FROM public.resellers WHERE name = v_reseller_name LIMIT 1;
+    IF NOT FOUND THEN
+        RETURN json_build_object('success', false, 'message', 'Allotted partner record not found.');
+    END IF;
+
+    IF TRIM(v_reseller.pin) <> TRIM(p_password) AND (v_card IS NULL OR TRIM(COALESCE(v_card.owner_pin, '')) <> TRIM(p_password)) THEN
+        RETURN json_build_object('success', false, 'message', 'Unauthorized: Invalid PIN for Card #' || p_code);
+    END IF;
+
+    -- 5. Upsert into public.clients (preserving reseller_name)
     INSERT INTO public.clients (
-        card_code, business_name, destination_url, category, 
+        card_code, reseller_name, business_name, destination_url, category,
         status, source_url, city_location, whatsapp_url, whatsapp_group_url, instagram_url,
-        owner_pin, updated_at
+        owner_pin, platform, updated_at
     )
     VALUES (
-        p_code, p_business_name, p_destination_url, p_category,
+        p_code, v_reseller_name, p_business_name, p_destination_url, p_category,
         'active', p_source_url, p_city_location, p_whatsapp_url, p_whatsapp_group_url, p_instagram_url,
-        p_password, timezone('utc'::text, now())
+        p_password, 'google', timezone('utc'::text, now())
     )
     ON CONFLICT (card_code) DO UPDATE SET
+        reseller_name = v_reseller_name,
         business_name = EXCLUDED.business_name,
         destination_url = EXCLUDED.destination_url,
         category = EXCLUDED.category,
@@ -342,6 +440,7 @@ BEGIN
         whatsapp_group_url = EXCLUDED.whatsapp_group_url,
         instagram_url = EXCLUDED.instagram_url,
         owner_pin = EXCLUDED.owner_pin,
+        platform = 'google',
         updated_at = timezone('utc'::text, now());
 
     INSERT INTO public.registrations (card_code, business_name, action)
@@ -354,7 +453,40 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- RPC: deregister_card
 CREATE OR REPLACE FUNCTION public.deregister_card(p_code INTEGER, p_password TEXT)
 RETURNS JSON AS $$
+DECLARE
+    v_card RECORD;
+    v_reseller_name TEXT;
+    v_reseller RECORD;
 BEGIN
+    -- 1. Check if card exists in clients table
+    SELECT * INTO v_card FROM public.clients WHERE card_code = p_code LIMIT 1;
+
+    -- 2. Determine allotted reseller
+    IF v_card IS NOT NULL AND v_card.reseller_name IS NOT NULL AND length(trim(v_card.reseller_name)) > 0 THEN
+        v_reseller_name := trim(v_card.reseller_name);
+    ELSE
+        SELECT reseller_name INTO v_reseller_name 
+        FROM public.batches 
+        WHERE p_code BETWEEN range_start AND range_end 
+        ORDER BY id DESC LIMIT 1;
+    END IF;
+
+    -- 3. If not allotted, reject
+    IF v_reseller_name IS NULL OR length(trim(v_reseller_name)) = 0 THEN
+        RETURN json_build_object('success', false, 'message', 'Card #' || p_code || ' is not allotted.');
+    END IF;
+
+    -- 4. Verify reseller and PIN match
+    SELECT * INTO v_reseller FROM public.resellers WHERE name = v_reseller_name LIMIT 1;
+    IF NOT FOUND THEN
+        RETURN json_build_object('success', false, 'message', 'Allotted reseller not found.');
+    END IF;
+
+    IF TRIM(v_reseller.pin) <> TRIM(p_password) AND (v_card IS NULL OR TRIM(COALESCE(v_card.owner_pin, '')) <> TRIM(p_password)) THEN
+        RETURN json_build_object('success', false, 'message', 'Unauthorized: Invalid PIN for Card #' || p_code);
+    END IF;
+
+    -- 5. Wipe card back to unregistered (keeps reseller_name intact for re-assignment)
     UPDATE public.clients
     SET status = 'unregistered',
         business_name = NULL,
@@ -362,6 +494,9 @@ BEGIN
         whatsapp_url = NULL,
         whatsapp_group_url = NULL,
         instagram_url = NULL,
+        source_url = NULL,
+        city_location = NULL,
+        owner_pin = NULL,
         updated_at = timezone('utc'::text, now())
     WHERE card_code = p_code;
 
