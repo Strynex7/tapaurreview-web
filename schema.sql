@@ -195,7 +195,7 @@ RETURNS JSON AS $$
 DECLARE
     v_result JSON;
 BEGIN
-    IF req_category IS NULL OR req_category = 'All' THEN
+    IF req_category IS NULL OR req_category = 'All' OR req_category = '' THEN
         SELECT json_agg(t) INTO v_result FROM (
             SELECT business_name, city_location, category, monthly_taps_count
             FROM public.clients
@@ -207,7 +207,18 @@ BEGIN
         SELECT json_agg(t) INTO v_result FROM (
             SELECT business_name, city_location, category, monthly_taps_count
             FROM public.clients
-            WHERE status = 'active' AND category = req_category AND business_name IS NOT NULL
+            WHERE status = 'active' 
+              AND business_name IS NOT NULL
+              AND (
+                  category = req_category
+                  OR (req_category IN ('Cafes & Restaurants', 'Restaurant & Cafe') AND category IN ('Cafes & Restaurants', 'Restaurant & Cafe'))
+                  OR (req_category IN ('Salons & Spas', 'Salon & Spa') AND category IN ('Salons & Spas', 'Salon & Spa'))
+                  OR (req_category IN ('Clinics & Healthcare', 'Healthcare & Clinic') AND category IN ('Clinics & Healthcare', 'Healthcare & Clinic'))
+                  OR (req_category IN ('Retail Stores', 'Retail & Shopping') AND category IN ('Retail Stores', 'Retail & Shopping'))
+                  OR (req_category IN ('Fitness & Gyms', 'Fitness & Gym') AND category IN ('Fitness & Gyms', 'Fitness & Gym'))
+                  OR (LOWER(category) LIKE '%' || LOWER(req_category) || '%')
+                  OR (LOWER(req_category) LIKE '%' || LOWER(category) || '%')
+              )
             ORDER BY monthly_taps_count DESC
             LIMIT 25
         ) t;
@@ -655,9 +666,11 @@ BEGIN
 
     -- Ensure card records exist and are assigned to this reseller
     FOR i IN p_range_start..p_range_end LOOP
-        INSERT INTO public.clients (card_code, reseller_name, status)
-        VALUES (i, p_reseller_name, 'unregistered')
-        ON CONFLICT (card_code) DO UPDATE SET reseller_name = EXCLUDED.reseller_name;
+        INSERT INTO public.clients (card_code, reseller_name, status, platform)
+        VALUES (i, p_reseller_name, 'unregistered', 'google')
+        ON CONFLICT (card_code) DO UPDATE SET 
+            reseller_name = EXCLUDED.reseller_name,
+            platform = 'google';
     END LOOP;
 
     RETURN json_build_object('success', true, 'message', 'Batch assigned successfully!');
