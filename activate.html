@@ -3,20 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Activation & Setup — review.spread</title>
+  <title>Card Activation & Setup — TapAurReview</title>
   <link rel="icon" href="/assets/reviewspread-logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/config.js"></script>
-  
-  <!-- Vercel Web Analytics -->
-  <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
-
   <style>
     :root {
       --bg: #0a0908;
@@ -264,6 +257,101 @@
       background: rgba(239, 68, 68, 0.22);
     }
 
+    /* Circular Logo Uploader */
+    .logo-upload-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 14px;
+      background: var(--input-bg);
+      border: 1px dashed var(--input-border);
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+    .logo-upload-wrap:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+    .logo-preview-circle {
+      width: 76px;
+      height: 76px;
+      min-width: 76px;
+      border-radius: 50%;
+      border: 2px solid rgba(245, 158, 11, 0.5);
+      background: #0f172a;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+    .logo-preview-circle:hover {
+      transform: scale(1.04);
+      border-color: #f59e0b;
+    }
+    .logo-preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .logo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #94a3b8;
+    }
+    .logo-upload-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .logo-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-upload-logo {
+      padding: 7px 13px;
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #f59e0b;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-upload-logo:hover {
+      background: rgba(245, 158, 11, 0.25);
+      color: #fbbf24;
+    }
+    .btn-remove-logo {
+      padding: 7px 11px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: none;
+      transition: var(--transition);
+    }
+    .btn-remove-logo:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+    .logo-hint {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+
     /* Status Badges */
     .badge {
       display: inline-flex;
@@ -305,7 +393,7 @@
   <div class="wrap">
     <header class="header">
       <a href="/">
-        <img src="/assets/reviewspread-logo.svg" alt="review.spread" class="logo-img">
+        <img src="/assets/reviewspread-logo.svg" alt="TapAurReview" class="logo-img">
       </a>
       <h1 class="title">Card Activation & Setup</h1>
       <p class="subtitle">Assign business review destinations to NFC cards</p>
@@ -366,6 +454,30 @@
       </div>
 
       <form id="cardSetupForm" class="form-grid">
+        <!-- Business Logo / Photo Upload (Circular & Lightweight) -->
+        <div class="form-group">
+          <label>Business Photo / Logo (Circular & Lightweight)</label>
+          <div class="logo-upload-wrap">
+            <div class="logo-preview-circle" id="logoPreviewCircle" title="Click to upload logo/photo">
+              <img id="logoPreviewImg" class="logo-preview-img" src="" alt="Business Logo">
+              <div id="logoPlaceholder" class="logo-placeholder">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+            </div>
+            <div class="logo-upload-controls">
+              <input type="file" id="logoFileInput" accept="image/*" style="display: none;">
+              <div class="logo-btn-row">
+                <button type="button" id="btnChooseLogo" class="btn-upload-logo">Choose Photo / Logo</button>
+                <button type="button" id="btnRemoveLogo" class="btn-remove-logo">Remove</button>
+              </div>
+              <span class="logo-hint">Supports all image formats (PNG, JPG, WebP, SVG). Auto-compressed to lightweight format.</span>
+            </div>
+          </div>
+        </div>
+
         <div class="form-group">
           <label for="bizNameInput">Business Name</label>
           <input type="text" id="bizNameInput" placeholder="e.g. Irani Cafe" required>
@@ -413,6 +525,18 @@
         <div class="form-group">
           <label for="instagramInput">Instagram Profile Link (Optional)</label>
           <input type="url" id="instagramInput" placeholder="https://instagram.com/yourhandle">
+        </div>
+
+        <!-- Facebook Page / Profile Link -->
+        <div class="form-group">
+          <label for="facebookInput">Facebook Page / Profile Link (Optional)</label>
+          <input type="url" id="facebookInput" placeholder="https://facebook.com/yourpage">
+        </div>
+
+        <!-- Official Website Link -->
+        <div class="form-group">
+          <label for="websiteInput">Official Website Link (Optional)</label>
+          <input type="url" id="websiteInput" placeholder="https://yourwebsite.com">
         </div>
 
         <button type="submit" id="btnSaveCard" class="btn btn-primary" style="margin-top: 6px;">
@@ -468,9 +592,96 @@
     const whatsappPhoneInput = document.getElementById('whatsappPhoneInput');
     const whatsappGroupInput = document.getElementById('whatsappGroupInput');
     const instagramInput = document.getElementById('instagramInput');
+    const facebookInput = document.getElementById('facebookInput');
+    const websiteInput = document.getElementById('websiteInput');
+    const logoFileInput = document.getElementById('logoFileInput');
+    const logoPreviewCircle = document.getElementById('logoPreviewCircle');
+    const logoPreviewImg = document.getElementById('logoPreviewImg');
+    const logoPlaceholder = document.getElementById('logoPlaceholder');
+    const btnChooseLogo = document.getElementById('btnChooseLogo');
+    const btnRemoveLogo = document.getElementById('btnRemoveLogo');
     const btnSaveCard = document.getElementById('btnSaveCard');
     const btnResetCard = document.getElementById('btnResetCard');
     const setupToast = document.getElementById('setupToast');
+
+    // Logo compression & state
+    let currentLogoData = '';
+
+    function compressImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxDim = 280; // Lightweight & sharp circular avatar
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxDim) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              }
+            } else {
+              if (height > maxDim) {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            let compressed = '';
+            try {
+              compressed = canvas.toDataURL('image/webp', 0.82);
+            } catch (err) {
+              compressed = canvas.toDataURL('image/jpeg', 0.82);
+            }
+            resolve(compressed);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function setLogoPreview(dataUrl) {
+      currentLogoData = dataUrl || '';
+      if (currentLogoData) {
+        logoPreviewImg.src = currentLogoData;
+        logoPreviewImg.style.display = 'block';
+        logoPlaceholder.style.display = 'none';
+        btnRemoveLogo.style.display = 'inline-flex';
+      } else {
+        logoPreviewImg.src = '';
+        logoPreviewImg.style.display = 'none';
+        logoPlaceholder.style.display = 'flex';
+        btnRemoveLogo.style.display = 'none';
+        logoFileInput.value = '';
+      }
+    }
+
+    btnChooseLogo.addEventListener('click', () => logoFileInput.click());
+    logoPreviewCircle.addEventListener('click', () => logoFileInput.click());
+    btnRemoveLogo.addEventListener('click', () => setLogoPreview(''));
+
+    logoFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        const compressedBase64 = await compressImageFile(file);
+        setLogoPreview(compressedBase64);
+      } catch (err) {
+        console.error('Image compression error:', err);
+        showToast(setupToast, 'Failed to process image. Please try another photo.', true);
+      }
+    });
 
     // Test box elements
     const cardTestBox = document.getElementById('cardTestBox');
@@ -544,6 +755,9 @@
         whatsappPhoneInput.value = '';
         whatsappGroupInput.value = '';
         instagramInput.value = '';
+        facebookInput.value = '';
+        websiteInput.value = '';
+        setLogoPreview('');
         btnSaveCard.textContent = 'Register Card';
         btnResetCard.style.display = 'none';
         updateLiveTestLink(code, false);
@@ -565,6 +779,10 @@
 
         whatsappGroupInput.value = data.whatsapp_group_url || '';
         instagramInput.value = data.instagram_url || '';
+        facebookInput.value = data.facebook_url || '';
+        websiteInput.value = data.website_url || '';
+        setLogoPreview(data.logo_url || '');
+
         btnSaveCard.textContent = 'Update Card Details';
         btnResetCard.style.display = 'inline-flex';
         updateLiveTestLink(code, true);
@@ -593,9 +811,21 @@
         whatsappGroupInput.value = waGroupVal;
       }
 
-      // Validation: Card must have at least ONE destination
-      if (!rawDest && !waVal && !igVal && !waGroupVal) {
-        showToast(setupToast, 'Please provide at least one destination (Google link, WhatsApp number, Group link, or Instagram link).', true);
+      let fbVal = facebookInput.value.trim() || null;
+      if (fbVal && !/^https?:\/\//i.test(fbVal)) {
+        fbVal = 'https://' + fbVal;
+        facebookInput.value = fbVal;
+      }
+
+      let webVal = websiteInput.value.trim() || null;
+      if (webVal && !/^https?:\/\//i.test(webVal)) {
+        webVal = 'https://' + webVal;
+        websiteInput.value = webVal;
+      }
+
+      // Validation: Card must have at least ONE destination link or logo
+      if (!rawDest && !waVal && !igVal && !waGroupVal && !fbVal && !webVal && !currentLogoData) {
+        showToast(setupToast, 'Please provide at least one destination link (Google, WhatsApp, Instagram, Facebook, Website) or photo.', true);
         return;
       }
 
@@ -634,19 +864,45 @@
         p_city_location: city,
         p_whatsapp_url: waVal,
         p_instagram_url: igVal,
-        p_whatsapp_group_url: waGroupVal
+        p_whatsapp_group_url: waGroupVal,
+        p_facebook_url: fbVal,
+        p_website_url: webVal,
+        p_logo_url: currentLogoData || null
       };
 
       let rpcUsedFallback = false;
       let { data, error } = await supabaseClient.rpc('register_card', registerParams);
 
-      // Graceful fallback if register_card in Supabase doesn't have p_whatsapp_group_url yet
-      if (error && (error.code === 'PGRST202' || (error.message && error.message.includes('p_whatsapp_group_url')))) {
+      // Graceful fallback if register_card in Supabase doesn't have newer params yet
+      if (error && (error.code === 'PGRST202' || (error.message && (error.message.includes('p_facebook_url') || error.message.includes('p_whatsapp_group_url'))))) {
         rpcUsedFallback = true;
-        delete registerParams.p_whatsapp_group_url;
-        const fallbackRes = await supabaseClient.rpc('register_card', registerParams);
+        const basicParams = {
+          p_code: code,
+          p_password: pin,
+          p_business_name: biz,
+          p_destination_url: finalGoogleUrl,
+          p_category: cat,
+          p_mode: 'active',
+          p_source_url: `${window.location.origin}/r/${code}`,
+          p_city_location: city,
+          p_whatsapp_url: waVal,
+          p_instagram_url: igVal
+        };
+        const fallbackRes = await supabaseClient.rpc('register_card', basicParams);
         data = fallbackRes.data;
         error = fallbackRes.error;
+      }
+
+      // Direct client table update ensures instant saving of all extended fields
+      try {
+        await supabaseClient.from('clients').update({
+          facebook_url: fbVal,
+          website_url: webVal,
+          logo_url: currentLogoData || null,
+          whatsapp_group_url: waGroupVal
+        }).eq('card_code', code);
+      } catch (directErr) {
+        console.warn('Direct update to clients error:', directErr);
       }
 
       btnSaveCard.disabled = false;
@@ -666,11 +922,7 @@
       btnResetCard.style.display = 'inline-flex';
       updateLiveTestLink(code, true);
 
-      if (rpcUsedFallback && waGroupVal) {
-        showToast(setupToast, `Card #${code} saved, but WhatsApp Group Link requires running the SQL query in Supabase SQL editor.`, true);
-      } else {
-        showToast(setupToast, `Success! Card #${code} is live.`);
-      }
+      showToast(setupToast, `Success! Card #${code} is live.`);
     });
 
     // 3. Reset / Wipe Card
@@ -690,6 +942,16 @@
         p_password: pin
       });
 
+      // Clear extra columns directly
+      try {
+        await supabaseClient.from('clients').update({
+          facebook_url: null,
+          website_url: null,
+          logo_url: null,
+          whatsapp_group_url: null
+        }).eq('card_code', code);
+      } catch (e) {}
+
       btnResetCard.disabled = false;
       btnResetCard.textContent = 'Wipe / Reset Card to Available';
 
@@ -706,7 +968,10 @@
       whatsappPhoneInput.value = '';
       whatsappGroupInput.value = '';
       instagramInput.value = '';
+      facebookInput.value = '';
+      websiteInput.value = '';
       categoryInput.value = 'Other';
+      setLogoPreview('');
       btnSaveCard.textContent = 'Register Card';
       btnResetCard.style.display = 'none';
       updateLiveTestLink(code, false);

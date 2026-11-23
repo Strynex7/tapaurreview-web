@@ -52,6 +52,9 @@ CREATE TABLE IF NOT EXISTS public.clients (
     whatsapp_url TEXT,
     whatsapp_group_url TEXT,
     instagram_url TEXT,
+    facebook_url TEXT,
+    website_url TEXT,
+    logo_url TEXT,
     source_url TEXT,
     platform TEXT DEFAULT 'google',
     status TEXT NOT NULL DEFAULT 'unregistered', -- 'unregistered', 'active'
@@ -62,6 +65,12 @@ CREATE TABLE IF NOT EXISTS public.clients (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Schema Migrations for existing deployments:
+ALTER TABLE public.clients ADD COLUMN IF NOT EXISTS whatsapp_group_url TEXT;
+ALTER TABLE public.clients ADD COLUMN IF NOT EXISTS facebook_url TEXT;
+ALTER TABLE public.clients ADD COLUMN IF NOT EXISTS website_url TEXT;
+ALTER TABLE public.clients ADD COLUMN IF NOT EXISTS logo_url TEXT;
 
 -- Table: orders (Direct Customer Orders & Reseller Bulk Orders)
 CREATE TABLE IF NOT EXISTS public.orders (
@@ -106,7 +115,10 @@ BEGIN
         NULLIF(TRIM(COALESCE(v_card.destination_url, '')), '') IS NOT NULL OR
         NULLIF(TRIM(COALESCE(v_card.whatsapp_url, '')), '') IS NOT NULL OR
         NULLIF(TRIM(COALESCE(v_card.instagram_url, '')), '') IS NOT NULL OR
-        NULLIF(TRIM(COALESCE(v_card.whatsapp_group_url, '')), '') IS NOT NULL
+        NULLIF(TRIM(COALESCE(v_card.whatsapp_group_url, '')), '') IS NOT NULL OR
+        NULLIF(TRIM(COALESCE(v_card.facebook_url, '')), '') IS NOT NULL OR
+        NULLIF(TRIM(COALESCE(v_card.website_url, '')), '') IS NOT NULL OR
+        NULLIF(TRIM(COALESCE(v_card.logo_url, '')), '') IS NOT NULL
     ) THEN
         RETURN json_build_object(
             'status', 'active',
@@ -117,7 +129,10 @@ BEGIN
             'destination_url', COALESCE(v_card.destination_url, ''),
             'whatsapp_url', COALESCE(v_card.whatsapp_url, ''),
             'whatsapp_group_url', COALESCE(v_card.whatsapp_group_url, ''),
-            'instagram_url', COALESCE(v_card.instagram_url, '')
+            'instagram_url', COALESCE(v_card.instagram_url, ''),
+            'facebook_url', COALESCE(v_card.facebook_url, ''),
+            'website_url', COALESCE(v_card.website_url, ''),
+            'logo_url', COALESCE(v_card.logo_url, '')
         );
     END IF;
 
@@ -353,7 +368,10 @@ BEGIN
             'destination_url', '',
             'whatsapp_url', '',
             'whatsapp_group_url', '',
-            'instagram_url', ''
+            'instagram_url', '',
+            'facebook_url', '',
+            'website_url', '',
+            'logo_url', ''
         );
     END IF;
 
@@ -369,7 +387,10 @@ BEGIN
         'destination_url', COALESCE(v_card.destination_url, ''),
         'whatsapp_url', COALESCE(v_card.whatsapp_url, ''),
         'whatsapp_group_url', COALESCE(v_card.whatsapp_group_url, ''),
-        'instagram_url', COALESCE(v_card.instagram_url, '')
+        'instagram_url', COALESCE(v_card.instagram_url, ''),
+        'facebook_url', COALESCE(v_card.facebook_url, ''),
+        'website_url', COALESCE(v_card.website_url, ''),
+        'logo_url', COALESCE(v_card.logo_url, '')
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -377,6 +398,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- RPC: register_card
 DROP FUNCTION IF EXISTS public.register_card(INTEGER, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.register_card(INTEGER, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.register_card(INTEGER, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT);
 
 CREATE OR REPLACE FUNCTION public.register_card(
     p_code INTEGER,
@@ -389,7 +411,10 @@ CREATE OR REPLACE FUNCTION public.register_card(
     p_city_location TEXT,
     p_whatsapp_url TEXT,
     p_instagram_url TEXT,
-    p_whatsapp_group_url TEXT DEFAULT NULL
+    p_whatsapp_group_url TEXT DEFAULT NULL,
+    p_facebook_url TEXT DEFAULT NULL,
+    p_website_url TEXT DEFAULT NULL,
+    p_logo_url TEXT DEFAULT NULL
 )
 RETURNS JSON AS $$
 DECLARE
@@ -432,11 +457,13 @@ BEGIN
     INSERT INTO public.clients (
         card_code, reseller_name, business_name, destination_url, category,
         status, source_url, city_location, whatsapp_url, whatsapp_group_url, instagram_url,
+        facebook_url, website_url, logo_url,
         owner_pin, platform, updated_at
     )
     VALUES (
         p_code, v_reseller_name, p_business_name, p_destination_url, p_category,
         'active', p_source_url, p_city_location, p_whatsapp_url, p_whatsapp_group_url, p_instagram_url,
+        p_facebook_url, p_website_url, p_logo_url,
         p_password, 'google', timezone('utc'::text, now())
     )
     ON CONFLICT (card_code) DO UPDATE SET
@@ -450,6 +477,9 @@ BEGIN
         whatsapp_url = EXCLUDED.whatsapp_url,
         whatsapp_group_url = EXCLUDED.whatsapp_group_url,
         instagram_url = EXCLUDED.instagram_url,
+        facebook_url = EXCLUDED.facebook_url,
+        website_url = EXCLUDED.website_url,
+        logo_url = EXCLUDED.logo_url,
         owner_pin = EXCLUDED.owner_pin,
         platform = 'google',
         updated_at = timezone('utc'::text, now());
@@ -505,6 +535,9 @@ BEGIN
         whatsapp_url = NULL,
         whatsapp_group_url = NULL,
         instagram_url = NULL,
+        facebook_url = NULL,
+        website_url = NULL,
+        logo_url = NULL,
         source_url = NULL,
         city_location = NULL,
         owner_pin = NULL,
