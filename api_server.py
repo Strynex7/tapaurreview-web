@@ -20,8 +20,14 @@ def health():
 # ── Supabase Keep-Alive Ping (Prevents Supabase Pausing) ───────────
 @app.route('/api/ping-supabase', methods=['GET'])
 def ping_supabase():
-    supabase_url = os.environ.get('SUPABASE_URL', 'https://foqdsvfquxakqafqzgtd.supabase.co')
-    supabase_key = os.environ.get('SUPABASE_ANON_KEY', 'sb_publishable_IobuS4v7R_538rQ6kjZ_uQ_1nrXVGHT')
+    supabase_url = os.environ.get('SUPABASE_URL', '')
+    supabase_key = os.environ.get('SUPABASE_ANON_KEY', '')
+
+    if not supabase_url or not supabase_key:
+        return jsonify({
+            "status": "error",
+            "message": "SUPABASE_URL or SUPABASE_ANON_KEY environment variable is not configured."
+        }), 500
 
     try:
         import urllib.request

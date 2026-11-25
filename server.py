@@ -39,9 +39,11 @@ class ReviewSpreadHandler(http.server.SimpleHTTPRequestHandler):
             parsed = urllib.parse.urlparse(self.path)
             path = parsed.path.strip('/')
 
-            # Security: Never serve .env or secret files to client
-            if path == '.env' or path.endswith('/.env') or path.endswith('\\.env'):
-                self.send_error(403, "Access Denied: Environment file is protected.")
+            # Security: Never serve .env or secret backend files to client
+            norm_path = path.lower()
+            if (norm_path == '.env' or norm_path.startswith('.env') or '/.env' in norm_path or '\\.env' in norm_path
+                or norm_path.startswith('.git') or norm_path.endswith('.sql') or norm_path.endswith('.py')):
+                self.send_error(403, "Access Denied: Protected file.")
                 return
 
             # Dynamic Configuration from .env for js/config.js

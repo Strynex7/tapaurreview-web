@@ -10,14 +10,15 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- ----------------------------------------------------------------------------
 
 -- Table: admin_config (Master Admin credentials)
+-- Note: Replace 'CHANGE_ME_IN_PRODUCTION' with your secure master password before deploying
 CREATE TABLE IF NOT EXISTS public.admin_config (
     id SERIAL PRIMARY KEY,
-    admin_password TEXT NOT NULL DEFAULT 'Sanklp@412200',
+    admin_password TEXT NOT NULL DEFAULT 'CHANGE_ME_IN_PRODUCTION',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 INSERT INTO public.admin_config (admin_password) 
-SELECT 'Sanklp@412200' 
+SELECT 'CHANGE_ME_IN_PRODUCTION' 
 WHERE NOT EXISTS (SELECT 1 FROM public.admin_config);
 
 -- Table: resellers (Partners & Bulk Buyers)

@@ -471,9 +471,9 @@
               <input type="file" id="logoFileInput" accept="image/*" style="display: none;">
               <div class="logo-btn-row">
                 <button type="button" id="btnChooseLogo" class="btn-upload-logo">Choose Photo / Logo</button>
-                <button type="button" id="btnRemoveLogo" class="btn-remove-logo">Remove</button>
+                <button type="button" id="btnRemoveLogo" class="btn-remove-logo" style="display: none;">Remove</button>
               </div>
-              <span class="logo-hint">Supports all image formats (PNG, JPG, WebP, SVG). Auto-compressed to lightweight format.</span>
+              <span class="logo-hint">Supports all image formats (PNG, JPG, WebP, SVG). High definition & crisp.</span>
             </div>
           </div>
         </div>
@@ -614,17 +614,16 @@
           const img = new Image();
           img.onload = () => {
             const canvas = document.createElement('canvas');
-            const maxDim = 280; // Lightweight & sharp circular avatar
+            const maxDim = 800; // High definition resolution - zero blurriness
             let width = img.width;
             let height = img.height;
 
-            if (width > height) {
-              if (width > maxDim) {
+            // Only scale down if original is huge (> 800px)
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
                 height = Math.round((height * maxDim) / width);
                 width = maxDim;
-              }
-            } else {
-              if (height > maxDim) {
+              } else {
                 width = Math.round((width * maxDim) / height);
                 height = maxDim;
               }
@@ -633,13 +632,16 @@
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
 
+            // Gentle/mild compression (0.90 quality) so details and text stay sharp like original
             let compressed = '';
             try {
-              compressed = canvas.toDataURL('image/webp', 0.82);
+              compressed = canvas.toDataURL('image/webp', 0.90);
             } catch (err) {
-              compressed = canvas.toDataURL('image/jpeg', 0.82);
+              compressed = canvas.toDataURL('image/jpeg', 0.90);
             }
             resolve(compressed);
           };

@@ -62,11 +62,11 @@ review/
 
 ## 🔐 Credentials & Config Management
 
-All client-side configuration is managed in **[js/config.js](js/config.js)**:
-* `SUPABASE_URL`: Your Supabase project URL (`https://foqdsvfquxakqafqzgtd.supabase.co`).
+All client-side configuration is managed in **[js/config.js](js/config.js)** (auto-generated from `.env`):
+* `SUPABASE_URL`: Your Supabase project URL (`https://your-project.supabase.co`).
 * `SUPABASE_KEY`: Your Supabase publishable anonymous key.
-* `ADMIN_UPI_ID`: Your receiving UPI VPA (`7620952720@ybl`).
-* `ADMIN_PHONE`: Your WhatsApp contact number (`917620952720`).
+* `ADMIN_UPI_ID`: Your receiving UPI VPA (`yourname@upi`).
+* `ADMIN_PHONE`: Your WhatsApp contact number (`919876543210`).
 * `PRICING_TIERS`: Bulk reseller pack rates and single card rates.
 
 ---
