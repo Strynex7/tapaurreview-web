@@ -26,17 +26,17 @@
       background-color: #0a0908;
       background-image:
         linear-gradient(180deg,
-          rgba(10, 9, 8, 0.98) 0%,
-          rgba(10, 9, 8, 0.84) 38%,
-          rgba(10, 9, 8, 0.56) 76%,
-          rgba(10, 9, 8, 0.72) 100%
+          rgba(10, 9, 8, 0.96) 0%,
+          rgba(10, 9, 8, 0.68) 38%,
+          rgba(10, 9, 8, 0.25) 75%,
+          rgba(10, 9, 8, 0.48) 100%
         ),
-        url('assets/footer-india-bg.webp');
+        url('/assets/footer-india-bg.webp');
       background-position: center top, center bottom;
       background-repeat: no-repeat, no-repeat;
       background-size: 100% 100%, min(100%, 1500px) auto;
       border-top: 1px solid rgba(245, 158, 11, 0.22);
-      padding: 52px 0 36px;
+      padding: 52px 0 42px;
       overflow: hidden;
     }
 
@@ -128,16 +128,25 @@
 
     @media (max-width: 767px) {
       .home-footer {
-        background-size: 100% 100%, 135% auto;
+        background-image:
+          linear-gradient(180deg,
+            rgba(10, 9, 8, 0.95) 0%,
+            rgba(10, 9, 8, 0.62) 45%,
+            rgba(10, 9, 8, 0.14) 80%,
+            rgba(10, 9, 8, 0.35) 100%
+          ),
+          url('/assets/footer-india-bg.webp');
+        background-size: 100% 100%, 165% auto;
         background-position: center top, center bottom;
-        padding: 36px 0 24px;
+        padding: 32px 0 135px;
       }
       .home-footer .footer-grid {
         padding: 20px 18px;
         gap: 24px;
+        background: rgba(12, 10, 8, 0.72);
       }
       .home-footer .footer-bottom-bar {
-        margin-top: 64px;
+        margin-top: 28px;
         flex-direction: column;
         text-align: center;
       }
