@@ -352,6 +352,66 @@
       line-height: 1.35;
     }
 
+    /* Card Background Image Uploader */
+    .bg-upload-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 14px;
+      background: var(--input-bg);
+      border: 1px dashed var(--input-border);
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+    .bg-upload-wrap:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+    .bg-preview-rect {
+      width: 100px;
+      height: 64px;
+      min-width: 100px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(245, 158, 11, 0.4);
+      background: #0f172a;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .bg-preview-rect:hover {
+      transform: scale(1.03);
+      border-color: #f59e0b;
+    }
+    .bg-preview-img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      border-radius: 7px;
+    }
+    .bg-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: #94a3b8;
+      font-size: 0.68rem;
+      text-align: center;
+      padding: 4px;
+    }
+    .bg-upload-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
     /* Status Badges */
     .badge {
       display: inline-flex;
@@ -478,6 +538,30 @@
           </div>
         </div>
 
+        <!-- Card Background Image Upload (Behind the Card Template) -->
+        <div class="form-group">
+          <label>Card Background Image (Behind Links & Profile — Mobile Optimized)</label>
+          <div class="bg-upload-wrap">
+            <div class="bg-preview-rect" id="bgPreviewRect" title="Click to upload card background image">
+              <img id="bgPreviewImg" class="bg-preview-img" src="" alt="Card Background">
+              <div id="bgPlaceholder" class="bg-placeholder">
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Upload Card Background</span>
+              </div>
+            </div>
+            <div class="bg-upload-controls">
+              <input type="file" id="bgFileInput" accept="image/*" style="display: none;">
+              <div class="logo-btn-row">
+                <button type="button" id="btnChooseBg" class="btn-upload-logo">Choose Background Image</button>
+                <button type="button" id="btnRemoveBg" class="btn-remove-logo" style="display: none;">Remove</button>
+              </div>
+              <span class="logo-hint">Shown inside your card behind profile & links. Auto-fitted & mobile friendly.</span>
+            </div>
+          </div>
+        </div>
+
         <div class="form-group">
           <label for="bizNameInput">Business Name</label>
           <input type="text" id="bizNameInput" placeholder="e.g. Irani Cafe" required>
@@ -600,6 +684,12 @@
     const logoPlaceholder = document.getElementById('logoPlaceholder');
     const btnChooseLogo = document.getElementById('btnChooseLogo');
     const btnRemoveLogo = document.getElementById('btnRemoveLogo');
+    const bgFileInput = document.getElementById('bgFileInput');
+    const bgPreviewRect = document.getElementById('bgPreviewRect');
+    const bgPreviewImg = document.getElementById('bgPreviewImg');
+    const bgPlaceholder = document.getElementById('bgPlaceholder');
+    const btnChooseBg = document.getElementById('btnChooseBg');
+    const btnRemoveBg = document.getElementById('btnRemoveBg');
     const btnSaveCard = document.getElementById('btnSaveCard');
     const btnResetCard = document.getElementById('btnResetCard');
     const setupToast = document.getElementById('setupToast');
@@ -685,6 +775,85 @@
       }
     });
 
+    // Background Image compression & state
+    let currentBgData = '';
+
+    function processBgImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxDim = 1200; // Crisp banner/background for mobile & retina screens
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, width, height);
+
+            let compressed = '';
+            try {
+              compressed = canvas.toDataURL('image/webp', 0.88);
+            } catch (err) {
+              compressed = canvas.toDataURL('image/jpeg', 0.88);
+            }
+            resolve(compressed);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function setBgPreview(dataUrl) {
+      currentBgData = dataUrl || '';
+      if (currentBgData) {
+        bgPreviewImg.src = currentBgData;
+        bgPreviewImg.style.display = 'block';
+        bgPlaceholder.style.display = 'none';
+        btnRemoveBg.style.display = 'inline-flex';
+      } else {
+        bgPreviewImg.src = '';
+        bgPreviewImg.style.display = 'none';
+        bgPlaceholder.style.display = 'flex';
+        btnRemoveBg.style.display = 'none';
+        bgFileInput.value = '';
+      }
+    }
+
+    btnChooseBg.addEventListener('click', (e) => { e.stopPropagation(); bgFileInput.click(); });
+    btnRemoveBg.addEventListener('click', (e) => { e.stopPropagation(); setBgPreview(''); });
+    bgPreviewRect.addEventListener('click', () => bgFileInput.click());
+
+    bgFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        const bgData = await processBgImageFile(file);
+        setBgPreview(bgData);
+      } catch (err) {
+        console.error('Background image error:', err);
+        showToast(setupToast, 'Failed to process background image.', true);
+      }
+    });
+
     // Test box elements
     const cardTestBox = document.getElementById('cardTestBox');
     const testLinkUrl = document.getElementById('testLinkUrl');
@@ -760,6 +929,7 @@
         facebookInput.value = '';
         websiteInput.value = '';
         setLogoPreview('');
+        setBgPreview('');
         btnSaveCard.textContent = 'Register Card';
         btnResetCard.style.display = 'none';
         updateLiveTestLink(code, false);
@@ -784,6 +954,23 @@
         facebookInput.value = data.facebook_url || '';
         websiteInput.value = data.website_url || '';
         setLogoPreview(data.logo_url || '');
+
+        // bg_image_url: try RPC data first, then fallback to direct clients table fetch
+        if (data.bg_image_url) {
+          setBgPreview(data.bg_image_url);
+        } else {
+          // Fallback: direct fetch from clients table (in case RPC hasn't been updated in Supabase yet)
+          try {
+            const { data: row } = await supabaseClient
+              .from('clients')
+              .select('bg_image_url')
+              .eq('card_code', code)
+              .single();
+            setBgPreview(row?.bg_image_url || '');
+          } catch (_) {
+            setBgPreview('');
+          }
+        }
 
         btnSaveCard.textContent = 'Update Card Details';
         btnResetCard.style.display = 'inline-flex';
@@ -825,9 +1012,9 @@
         websiteInput.value = webVal;
       }
 
-      // Validation: Card must have at least ONE destination link or logo
-      if (!rawDest && !waVal && !igVal && !waGroupVal && !fbVal && !webVal && !currentLogoData) {
-        showToast(setupToast, 'Please provide at least one destination link (Google, WhatsApp, Instagram, Facebook, Website) or photo.', true);
+      // Validation: Card must have at least ONE destination link, logo, or background
+      if (!rawDest && !waVal && !igVal && !waGroupVal && !fbVal && !webVal && !currentLogoData && !currentBgData) {
+        showToast(setupToast, 'Please provide at least one destination link (Google, WhatsApp, Instagram, Facebook, Website), photo, or background image.', true);
         return;
       }
 
@@ -869,14 +1056,15 @@
         p_whatsapp_group_url: waGroupVal,
         p_facebook_url: fbVal,
         p_website_url: webVal,
-        p_logo_url: currentLogoData || null
+        p_logo_url: currentLogoData || null,
+        p_bg_image_url: currentBgData || null
       };
 
       let rpcUsedFallback = false;
       let { data, error } = await supabaseClient.rpc('register_card', registerParams);
 
       // Graceful fallback if register_card in Supabase doesn't have newer params yet
-      if (error && (error.code === 'PGRST202' || (error.message && (error.message.includes('p_facebook_url') || error.message.includes('p_whatsapp_group_url'))))) {
+      if (error && (error.code === 'PGRST202' || (error.message && (error.message.includes('p_facebook_url') || error.message.includes('p_whatsapp_group_url') || error.message.includes('p_bg_image_url'))))) {
         rpcUsedFallback = true;
         const basicParams = {
           p_code: code,
@@ -901,6 +1089,7 @@
           facebook_url: fbVal,
           website_url: webVal,
           logo_url: currentLogoData || null,
+          bg_image_url: currentBgData || null,
           whatsapp_group_url: waGroupVal
         }).eq('card_code', code);
       } catch (directErr) {
@@ -950,6 +1139,7 @@
           facebook_url: null,
           website_url: null,
           logo_url: null,
+          bg_image_url: null,
           whatsapp_group_url: null
         }).eq('card_code', code);
       } catch (e) {}
@@ -974,6 +1164,7 @@
       websiteInput.value = '';
       categoryInput.value = 'Other';
       setLogoPreview('');
+      setBgPreview('');
       btnSaveCard.textContent = 'Register Card';
       btnResetCard.style.display = 'none';
       updateLiveTestLink(code, false);

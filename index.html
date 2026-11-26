@@ -19,6 +19,216 @@
   <meta property="og:image" content="assets/black_card.webp" />
   <meta name="theme-color" content="#030712">
   <script src="/js/config.js"></script>
+  <style>
+    /* Homepage-only Footer with Improvised Indian Heritage Skyline */
+    .home-footer {
+      position: relative;
+      background-color: #0a0908;
+      background-image:
+        linear-gradient(180deg,
+          rgba(10, 9, 8, 0.98) 0%,
+          rgba(10, 9, 8, 0.84) 38%,
+          rgba(10, 9, 8, 0.56) 76%,
+          rgba(10, 9, 8, 0.72) 100%
+        ),
+        url('assets/footer-india-bg.webp');
+      background-position: center top, center bottom;
+      background-repeat: no-repeat, no-repeat;
+      background-size: 100% 100%, min(100%, 1500px) auto;
+      border-top: 1px solid rgba(245, 158, 11, 0.22);
+      padding: 52px 0 36px;
+      overflow: hidden;
+    }
+
+    .home-footer .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .home-footer .footer-grid {
+      background: rgba(12, 10, 8, 0.58);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(245, 158, 11, 0.16);
+      border-radius: 18px;
+      padding: 28px 26px;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+    }
+
+    .home-footer .footer-col-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #fbbf24;
+      margin: 0 0 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .home-footer .footer-links-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .home-footer .footer-links-list a {
+      color: #d6d3d1;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s ease, transform 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .home-footer .footer-links-list a::before {
+      content: "›";
+      color: #f59e0b;
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .home-footer .footer-links-list a:hover {
+      color: #fbbf24;
+      transform: translateX(3px);
+    }
+
+    .home-footer .footer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      color: #fde68a;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .home-footer .footer-bottom-bar {
+      margin-top: 96px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(245, 158, 11, 0.18);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+      color: #e7e5e4;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+    }
+
+    @media (max-width: 767px) {
+      .home-footer {
+        background-size: 100% 100%, 135% auto;
+        background-position: center top, center bottom;
+        padding: 36px 0 24px;
+      }
+      .home-footer .footer-grid {
+        padding: 20px 18px;
+        gap: 24px;
+      }
+      .home-footer .footer-bottom-bar {
+        margin-top: 64px;
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* Homepage-only Setup Video Showcase */
+    .setup-video-box {
+      margin-top: 42px;
+      background: linear-gradient(145deg, rgba(24, 20, 17, 0.94) 0%, rgba(15, 12, 10, 0.96) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      border-radius: 22px;
+      padding: 28px 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 32px rgba(245, 158, 11, 0.06);
+      text-align: center;
+    }
+    .setup-video-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.32);
+      color: #fbbf24;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .setup-video-box h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.25rem, 2.8vw, 1.65rem);
+      font-weight: 800;
+      color: #fafaf9;
+      margin: 0 0 8px;
+    }
+    .setup-video-sub {
+      color: #a8a29e;
+      font-size: 0.92rem;
+      max-width: 600px;
+      margin: 0 auto 22px;
+      line-height: 1.55;
+    }
+    .setup-video-frame-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0a0908;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
+    }
+    .setup-video-frame-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .setup-video-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .setup-video-note {
+      font-size: 0.8rem;
+      color: #a8a29e;
+      margin-top: 12px;
+    }
+    @media (max-width: 767px) {
+      .setup-video-box {
+        margin-top: 28px;
+        padding: 20px 14px;
+        border-radius: 16px;
+      }
+      .setup-video-frame-wrap {
+        border-radius: 12px;
+      }
+      .setup-video-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="bg-blobs" aria-hidden="true">
@@ -41,7 +251,7 @@
         <ul class="nav-list" id="nav-list">
           <li><a href="#order">Order Cards</a></li>
           <li><a href="#leaderboard">Leaderboard</a></li>
-          <li><a href="#how-it-works">How it Works</a></li>
+          <li><a href="#how-it-works">How it's Works</a></li>
           <li><a href="#benefits">Benefits</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#faq">FAQ</a></li>
@@ -56,16 +266,20 @@
     <section id="hero" class="hero">
       <div class="container hero-grid">
         <div class="hero-content">
-          <p class="eyebrow">Contactless • Instant • Verified</p>
-          <h1 class="hero-title">Turn Walk-In Customers into <span class="gradient-text">5‑Star Google Reviews</span> in 1 Second.</h1>
-          <p class="hero-lead">Zero typing. Zero search friction. Hand the card, tap any smartphone, and collect authentic reviews instantly.</p>
+          <p class="eyebrow">Contactless &nbsp;•&nbsp; Instant &nbsp;•&nbsp; Verified</p>
+          <h1 class="hero-title">Every Walk-In Customer Is a <span class="gradient-text">5‑Star Google Review</span> Waiting to Happen.</h1>
+          <p class="hero-lead">No app downloads. No searching. No friction. Hand them the card, they tap — a verified review lands on your Google profile in seconds.</p>
           
           <div class="hero-ctas">
-            <a class="btn btn-primary" id="hero-order" href="#order">Order Cards Now</a>
-            <a class="btn btn-outline" href="#how-it-works">How it Works</a>
+            <a class="btn btn-primary" id="hero-order" href="#order">Order Your Cards</a>
+            <a class="btn btn-outline" href="#how-it-works">How it's Works</a>
           </div>
 
-          <p class="micro">Ships across India — one-time payment, no monthly fees.</p>
+          <p class="micro">
+            <span>Ships across India — one-time payment, no monthly fees.</span>
+            &nbsp;•&nbsp;
+            <span>24/7 WhatsApp support included.</span>
+          </p>
         </div>
 
         <div class="hero-banner">
@@ -86,21 +300,21 @@
     <!-- STATS -->
     <section class="section stats">
       <div class="container stats-grid">
-        <div>
-          <span class="stat-number" id="stat-biz" data-target="0">0</span><span>+</span>
-          <p>Businesses Onboarded</p>
+        <div class="stat reveal">
+          <span class="stat-number" id="stat-biz" data-target="0">0</span><span class="stat-suffix">+</span>
+          <p class="stat-label">Businesses Activated</p>
         </div>
-        <div>
-          <span class="stat-number" id="stat-taps" data-target="0">0</span><span>+</span>
-          <p>Number of Taps Till Now</p>
+        <div class="stat reveal">
+          <span class="stat-number" id="stat-taps" data-target="0">0</span><span class="stat-suffix">+</span>
+          <p class="stat-label">Total Card Taps</p>
         </div>
         <div class="stat reveal">
           <span class="stat-number" data-target="1">0</span><span class="stat-suffix">s</span>
-          <p>Average Tap Time</p>
+          <p class="stat-label">Avg. Review Time</p>
         </div>
         <div class="stat reveal">
           <span class="stat-number" data-target="4.9" data-decimal="1">0</span><span class="stat-suffix">★</span>
-          <p>Average Rating</p>
+          <p class="stat-label">Avg. Business Rating</p>
         </div>
       </div>
     </section>
@@ -108,8 +322,8 @@
     <!-- DIRECT ORDER CARD SECTION (ACRYLIC CARDS + SHIPPING) -->
     <section id="order" class="section order" style="padding-top: 10px;">
       <div class="container">
-        <h2 class="reveal">Order Your Smart Review Cards</h2>
-        <p class="muted reveal">Acrylic cards only — choose the black or white design. Minimum order: 5 cards at ₹150 per card, plus ₹120 delivery per order.</p>
+        <h2 class="reveal" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(1.5rem,3.5vw,2.1rem); font-weight:800; letter-spacing:-0.02em;">Order Your Smart Review Card</h2>
+        <p class="muted reveal">Premium acrylic NFC cards — black or white. Minimum 5 cards at ₹150/card + ₹120 flat delivery per order.</p>
 
         <div class="card reveal" style="max-width: 620px; margin: 28px auto 0; background: rgba(24, 20, 17, 0.92); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 20px; padding: 32px 24px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 158, 11, 0.05);">
           
@@ -137,13 +351,13 @@
               </div>
               <input type="password" id="orderCustPin" placeholder="e.g. 1234" maxlength="4" inputmode="numeric" required style="width: 100%; background: #14110e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 0.94rem; outline: none;">
               <p style="font-size: 0.82rem; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 6px; padding: 8px 10px; margin-top: 4px; line-height: 1.4;">
-                🔐 <strong>Password to activate your card:</strong> This 4-digit PIN is the secret password you will use to activate and program your physical review card(s) at <strong>reviewspread.in/activate</strong>.
+                🔐 <strong>Card activation password:</strong> This 4-digit PIN is what you'll use to program your physical NFC card at <strong>tapaurreview.vercel.app/activate</strong>.
               </p>
             </div>
 
             <!-- Order pricing -->
             <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; color: #86efac; line-height: 1.45;">
-              <strong>Both card designs are acrylic only.</strong> Minimum order is 5 cards at ₹150 per card, with a flat ₹120 delivery charge per order.
+              <strong>Both card variants are made of premium acrylic.</strong> Minimum order is 5 cards at ₹150 per card, with a flat ₹120 shipping charge per order.
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -158,7 +372,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Delivery Address & Contact
+                Delivery Address &amp; Contact
               </div>
 
               <!-- Line 1: Receiver Name -->
@@ -244,8 +458,9 @@
               </fieldset>
             </div>
 
-            <button type="submit" id="btnSubmitHomeOrder" class="btn btn-primary" disabled style="width: 100%; padding: 14px; font-size: 1rem; margin-top: 6px;">
-              Confirm Paid Order on WhatsApp
+            <button type="submit" id="btnSubmitHomeOrder" class="btn" disabled style="width: 100%; padding: 15px; font-size: 1rem; font-weight: 800; margin-top: 6px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: #fff; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 24px rgba(37,211,102,0.28); transition: opacity 0.2s, transform 0.15s; letter-spacing: 0.01em;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
+              Confirm &amp; Send Order on WhatsApp
             </button>
 
             <div id="homeOrderToast" style="display: none; padding: 10px; border-radius: 8px; font-size: 0.88rem; text-align: center; margin-top: 6px;"></div>
@@ -296,25 +511,47 @@
     <!-- HOW IT WORKS -->
     <section id="how-it-works" class="section how-it-works">
       <div class="container">
-        <h2 class="reveal">How TapAurReview Works — 3 Simple Steps</h2>
+        <h2 class="reveal">How It's Works — 3 Simple Steps</h2>
         <div class="steps-grid">
           <article class="step reveal">
             <div class="step-icon" aria-hidden="true">📳</div>
             <h3>Tap</h3>
-            <p>Customer taps their iPhone or Android on the card. No apps, no hassle.</p>
+            <p>Customer holds their iPhone or Android near the card for a moment — no app needed, no typing, nothing to download.</p>
           </article>
 
           <article class="step reveal">
             <div class="step-icon" aria-hidden="true">🚀</div>
-            <h3>Launch</h3>
-            <p>A direct Google Review page opens instantly, ready for the customer to share their experience.</p>
+            <h3>Land</h3>
+            <p>Your Google Review page opens instantly on their screen, pre-loaded and ready — they just tap the stars and hit submit.</p>
           </article>
 
           <article class="step reveal">
             <div class="step-icon" aria-hidden="true">📈</div>
-            <h3>Rank</h3>
-            <p>More authentic reviews → better Google Maps ranking → more local footfall and sales.</p>
+            <h3>Rise</h3>
+            <p>Fresh authentic reviews boost your Google Maps ranking → more visibility → more walk-ins → more revenue.</p>
           </article>
+        </div>
+
+        <!-- SETUP GUIDE VIDEO (Auto-plays muted when scrolled into view) -->
+        <div id="setup-guide" class="setup-video-box reveal">
+          <span class="setup-video-kicker">🎬 Official Setup Walkthrough</span>
+          <h3>Watch How to Set Up Your Card in 2 Minutes</h3>
+          <p class="setup-video-sub">See step-by-step how to activate your NFC card, link your Google Review page, and add WhatsApp, Instagram &amp; Website.</p>
+          <div class="setup-video-frame-wrap">
+            <iframe
+              id="setupGuideVideo"
+              data-src="https://www.youtube.com/embed/isO4-9i_-kE?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1"
+              src="https://www.youtube.com/embed/isO4-9i_-kE?rel=0&playsinline=1&modestbranding=1"
+              title="How to Set Up Your TapAurReview Smart Card"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <p class="setup-video-note">🔊 Video starts automatically as you browse — tap the speaker icon on the player to unmute.</p>
+          <div class="setup-video-actions">
+            <a class="btn btn-primary" href="/activate">Activate Your Card Now →</a>
+            <a class="btn btn-outline" href="#order">Order Smart Cards</a>
+          </div>
         </div>
       </div>
     </section>
@@ -322,27 +559,27 @@
     <!-- BENEFITS -->
     <section id="benefits" class="section benefits">
       <div class="container">
-        <h2 class="reveal">Why Local Businesses Choose TapAurReview</h2>
+        <h2 class="reveal">Why Smart Businesses Choose TapAurReview</h2>
         <div class="features-grid">
           <div class="feature reveal">
             <div class="feature-icon">📱</div>
-            <h3>Universal Compatibility</h3>
-            <p>Works natively on iPhones & Androids — no apps, no friction.</p>
+            <h3>Works on Every Phone</h3>
+            <p>Compatible with all modern iPhones and Android devices — no app download, no login, zero friction.</p>
           </div>
 
           <div class="feature reveal">
             <div class="feature-icon">💸</div>
-            <h3>No Monthly Fees</h3>
-            <p>One‑time purchase, lifetime validity — no surprise bills.</p>
+            <h3>Pay Once, Use Forever</h3>
+            <p>A single one-time payment gives you lifetime access — no subscriptions, no renewals, no hidden charges.</p>
           </div>
 
           <div class="feature reveal">
             <div class="feature-icon">💪</div>
-            <h3>Premium Durability</h3>
-            <p>Durable acrylic smart cards built for daily use.</p>
+            <h3>Built to Last</h3>
+            <p>Premium acrylic smart cards engineered for heavy daily use — durable, water-resistant, and desk-ready.</p>
           </div>
         </div>
-        <p class="trust reveal">Trusted by cafes, salons, clinics and retail shops across India.</p>
+        <p class="trust reveal">Trusted by cafes, salons, clinics, retail shops and service businesses across India.</p>
       </div>
     </section>
 
@@ -350,7 +587,7 @@
     <section id="pricing" class="section pricing">
       <div class="container">
         <h2 class="reveal">Choose Your NFC Review Card</h2>
-        <p class="pricing-intro muted reveal">Premium acrylic NFC cards — tap to collect Google Reviews, WhatsApp messages &amp; Instagram follows instantly.</p>
+        <p class="pricing-intro muted reveal">Premium acrylic NFC smart cards — one tap collects Google Reviews, WhatsApp leads &amp; Instagram follows. No app. No friction.</p>
 
         <div class="pricing-products">
           <!-- Card 1: Black Premium -->
@@ -358,9 +595,9 @@
             <div class="product-copy">
               <div class="product-panel-heading">
                 <div>
-                  <p class="product-kicker">Most Popular</p>
-                  <h3>Black Premium Card</h3>
-                  <p class="muted">Premium black finish with gold accents. Luxury feel for high-end businesses.</p>
+                  <p class="product-kicker">⭐ Most Popular</p>
+                  <h3>Black Elite Card</h3>
+                  <p class="muted">Stealth-black acrylic with gold NFC ring. Commands attention on any counter — built for businesses that mean business.</p>
                 </div>
                 <span class="product-size">Black</span>
               </div>
@@ -376,9 +613,9 @@
             <div class="product-copy">
               <div class="product-panel-heading">
                 <div>
-                  <p class="product-kicker">Classic Design</p>
-                  <h3>White Acrylic Card</h3>
-                  <p class="muted">Clean white finish with blue accents. Perfect for clinics, cafes &amp; salons.</p>
+                  <p class="product-kicker">✨ Clean &amp; Crisp</p>
+                  <h3>White Signature Card</h3>
+                  <p class="muted">Bright white finish with blue accents — the go-to card for clinics, cafes, salons and wellness studios that prefer a clean look.</p>
                 </div>
                 <span class="product-size">White</span>
               </div>
@@ -394,9 +631,9 @@
             <div class="product-copy">
               <div class="product-panel-heading">
                 <div>
-                  <p class="product-kicker">Bulk Reseller Pack</p>
-                  <h3>Multi-Card Stack</h3>
-                  <p class="muted">Order in bulk — 5, 10, 20, or 50 cards at discounted rates. Ideal for resellers &amp; agencies.</p>
+                  <p class="product-kicker">📦 Best Value</p>
+                  <h3>Bulk Partner Pack</h3>
+                  <p class="muted">Order 5, 10, 20 or 50 cards at volume pricing. Perfect for resellers, marketing agencies and multi-location businesses.</p>
                 </div>
                 <span class="product-size">Bulk</span>
               </div>
@@ -417,20 +654,38 @@
         <div class="testimonial-grid">
           <blockquote class="testimonial reveal">
             <div class="stars">★★★★★</div>
-            <p>"Our Google reviews doubled in the first month. Customers just tap and go — no more asking twice."</p>
-            <footer>— Priya, Cafe Owner, Pune</footer>
+            <p>"Pehle mahine mein hi humari reviews double ho gayi. Customers bas tap karte hain aur review aa jaata hai — zero effort on our side."</p>
+            <footer>— Rohan Kapoor, Cafe Owner, Mumbai</footer>
           </blockquote>
 
           <blockquote class="testimonial reveal">
             <div class="stars">★★★★★</div>
-            <p>"Setup took two minutes. Customers can leave a review without searching for our business."</p>
-            <footer>— Arjun, Salon Owner, Pune</footer>
+            <p>"Setup took under two minutes. Now customers find us on Google without us having to ask or remind them twice. Game changer."</p>
+            <footer>— Sneha Pillai, Salon Owner, Bangalore</footer>
           </blockquote>
 
           <blockquote class="testimonial reveal">
             <div class="stars">★★★★★</div>
-            <p>"Best one-time investment for local visibility. No subscriptions, no hassle."</p>
-            <footer>— Meera, Clinic Manager, Pune</footer>
+            <p>"Ek baar pay karo, hamesha ke liye — no subscription tension. Best investment for local business visibility."</p>
+            <footer>— Dr. Amit Verma, Clinic Owner, Pune</footer>
+          </blockquote>
+
+          <blockquote class="testimonial reveal">
+            <div class="stars">★★★★★</div>
+            <p>"We placed 20 cards across our shop counters. The number of Google reviews went from 14 to 80+ in 3 weeks. Absolutely worth it."</p>
+            <footer>— Faiz Khan, Retail Store, Hyderabad</footer>
+          </blockquote>
+
+          <blockquote class="testimonial reveal">
+            <div class="stars">★★★★★</div>
+            <p>"Meri bakery ki Google rating 3.8 se 4.6 ho gayi 2 mahino mein. TapAurReview ne sach mein farak dala."</p>
+            <footer>— Pooja Nair, Bakery Owner, Kochi</footer>
+          </blockquote>
+
+          <blockquote class="testimonial reveal">
+            <div class="stars">★★★★★</div>
+            <p>"My gym members love tapping the card after workouts. It's become a ritual — tap, review, done. Footfall has increased noticeably."</p>
+            <footer>— Vikram Singh, Fitness Studio, Delhi</footer>
           </blockquote>
         </div>
       </div>
@@ -440,44 +695,73 @@
     <section class="section guide-section">
       <div class="container">
         <div class="guide-grid">
+
+          <!-- WHY REVIEWS MATTER -->
           <div class="guide-card reveal">
-            <h2>Why Google Reviews Matter for Your Business</h2>
-            <ul class="guide-list">
+            <h2>Why Google Reviews Are Your Business's Biggest Asset</h2>
+            <ul class="guide-list" id="reviews-list-short">
               <li>
-                <strong>Local Ranking Power:</strong> They decide your local ranking. Businesses with more recent, positive reviews show up higher in Google Maps and the local pack.
+                <strong>Dominate Local Search:</strong> Google's algorithm ranks businesses with more fresh, positive reviews higher in Maps and the local 3-pack — meaning your competitors get seen first if you're not collecting reviews consistently.
               </li>
               <li>
-                <strong>The New Word of Mouth:</strong> Most people read reviews before visiting a restaurant, booking a salon, or calling a clinic.
+                <strong>Digital Word-of-Mouth:</strong> Over 90% of customers check Google reviews before stepping into a restaurant, clinic, salon, or retail store. Your rating is your first impression — before they even walk in.
               </li>
               <li>
-                <strong>Proof of Life:</strong> A steady stream of fresh reviews tells Google and customers that your business is active and reliable.
+                <strong>Signals You're Active &amp; Trustworthy:</strong> A steady flow of recent reviews tells both Google's algorithm and new customers that your business is open, thriving, and worth visiting.
               </li>
               <li>
-                <strong>Free Customer Feedback:</strong> Reviews show you exactly what customers love — and what to fix next.
+                <strong>Honest Business Intelligence:</strong> Reviews reveal what customers love and what needs fixing — it's free market research coming directly from the people who pay you.
               </li>
             </ul>
+            <div id="reviews-list-extra" style="display:none;">
+              <ul class="guide-list">
+                <li>
+                  <strong>Beat Bigger Competitors:</strong> A well-reviewed local shop consistently outranks national chains in neighbourhood searches — reviews are the great equaliser for small businesses.
+                </li>
+                <li>
+                  <strong>Boost Conversion Before They Visit:</strong> A business with 4.6★ and 200+ reviews converts significantly more profile visitors into actual footfall than one with just a few reviews.
+                </li>
+                <li>
+                  <strong>Build a Lasting Reputation:</strong> Every review is permanent content — a good review from 2 years ago still builds trust for a customer reading it today.
+                </li>
+              </ul>
+            </div>
+            <button onclick="var e=document.getElementById('reviews-list-extra'),b=this;e.style.display=e.style.display==='none'?'block':'none';b.textContent=e.style.display==='block'?'Show Less ↑':'Learn More →';" style="margin-top:14px;background:none;border:1px solid rgba(245,158,11,0.4);color:#fbbf24;padding:8px 20px;border-radius:8px;font-size:0.86rem;font-weight:700;cursor:pointer;transition:background 0.2s;">Learn More →</button>
           </div>
 
+          <!-- PRO TIPS -->
           <div class="guide-card reveal">
-            <h2>Pro Tips for Getting More Reviews</h2>
-            <ul class="guide-list">
+            <h2>Pro Tips to Maximise Your Review Collection</h2>
+            <ul class="guide-list" id="tips-list-short">
               <li>
-                <strong>Ask at the Right Moment:</strong> Right after a positive interaction, when the customer is happiest — not days later.
+                <strong>Strike While the Iron Is Hot:</strong> Hand the card immediately after a great experience — not at checkout, not via WhatsApp the next day. That 60-second window after a positive interaction is your golden moment.
               </li>
               <li>
-                <strong>Make it Effortless:</strong> Use the NFC smart card instead of asking customers to search for your business on Google Maps.
+                <strong>Remove Every Barrier:</strong> Don't ask customers to "search Google" or "find our Maps page." Just hand them the NFC card — one tap, review open, done.
               </li>
               <li>
-                <strong>Personalize the Request:</strong> Mention their visit or order, and explain that authentic reviews genuinely support your business.
+                <strong>Make It Feel Personal:</strong> Say something like "It genuinely helps us grow if you share a quick thought." A warm ask converts far better than a generic request.
               </li>
               <li>
-                <strong>Reply to Every Review:</strong> A thoughtful reply shows you care — and prospective customers read your replies too.
-              </li>
-              <li>
-                <strong>Never Buy Reviews:</strong> Incentives violate Google policies. Great service plus a frictionless tap works far better.
+                <strong>Acknowledge Every Single Review:</strong> Reply publicly — thank good reviews warmly and address bad ones professionally. Future customers always read how you respond.
               </li>
             </ul>
+            <div id="tips-list-extra" style="display:none;">
+              <ul class="guide-list">
+                <li>
+                  <strong>Train Your Entire Team:</strong> Every staff member who interacts with customers should know when and how to offer the tap card. Consistency multiplies results.
+                </li>
+                <li>
+                  <strong>Place Cards Strategically:</strong> At the billing counter, reception desk, dining table — anywhere the customer's experience peaks is the right place for the card.
+                </li>
+                <li>
+                  <strong>Stay 100% Compliant:</strong> Never offer discounts, gifts, or incentives in exchange for reviews. Google detects and penalises incentivised reviews — authentic taps always win.
+                </li>
+              </ul>
+            </div>
+            <button onclick="var e=document.getElementById('tips-list-extra'),b=this;e.style.display=e.style.display==='none'?'block':'none';b.textContent=e.style.display==='block'?'Show Less ↑':'Learn More →';" style="margin-top:14px;background:none;border:1px solid rgba(245,158,11,0.4);color:#fbbf24;padding:8px 20px;border-radius:8px;font-size:0.86rem;font-weight:700;cursor:pointer;transition:background 0.2s;">Learn More →</button>
           </div>
+
         </div>
       </div>
     </section>
@@ -485,54 +769,117 @@
     <!-- FAQ -->
     <section id="faq" class="section faq">
       <div class="container">
-        <h2 class="reveal">Frequently Asked Questions</h2>
+        <h2 class="reveal">Common Questions, Answered Honestly</h2>
         <div class="accordion" id="faq-accordion">
+
           <div class="accordion-item reveal">
-            <button id="faq1-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq1">Does it require any special app?</button>
-            <div id="faq1" class="accordion-panel" role="region" aria-labelledby="faq1-toggle">No. TapAurReview cards work natively with built-in NFC — no app downloads required.</div>
+            <button id="faq1-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq1">Do customers need to download any app to leave a review?</button>
+            <div id="faq1" class="accordion-panel" role="region" aria-labelledby="faq1-toggle">Not at all. TapAurReview cards use the built-in NFC chip in every modern smartphone. No app download, no QR scanning, no login — just tap and the Google Review page opens instantly.</div>
           </div>
 
           <div class="accordion-item reveal">
-            <button id="faq2-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq2">Does it work on both iPhone and Android?</button>
-            <div id="faq2" class="accordion-panel" role="region" aria-labelledby="faq2-toggle">Yes. It works on modern iPhones and Android phones that support NFC.</div>
+            <button id="faq2-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq2">Which phones are compatible — does it work on iPhone and Android both?</button>
+            <div id="faq2" class="accordion-panel" role="region" aria-labelledby="faq2-toggle">Yes, it works on all modern iPhones (iPhone 7 and newer) and all Android smartphones with NFC enabled — which covers the vast majority of phones in use across India today.</div>
           </div>
 
           <div class="accordion-item reveal">
-            <button id="faq3-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq3">Are there any hidden subscriptions?</button>
-            <div id="faq3" class="accordion-panel" role="region" aria-labelledby="faq3-toggle">No. TapAurReview is a one-time purchase with no monthly fees.</div>
+            <button id="faq3-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq3">Is there any monthly fee or hidden subscription after I buy?</button>
+            <div id="faq3" class="accordion-panel" role="region" aria-labelledby="faq3-toggle">Zero. It's a one-time purchase. Once you pay and receive your card, you own it for life. No renewal fees, no annual plans, no surprise charges — ever.</div>
           </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq4-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq4">How long does delivery take and where do you ship?</button>
+            <div id="faq4" class="accordion-panel" role="region" aria-labelledby="faq4-toggle">We ship pan-India via courier. Delivery typically takes 3–7 business days depending on your location. You'll receive tracking details on WhatsApp once your order is dispatched.</div>
+          </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq5-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq5">Can I change the Google Review link on my card later?</button>
+            <div id="faq5" class="accordion-panel" role="region" aria-labelledby="faq5-toggle">Yes! The card is fully reprogrammable. You can update your destination link, WhatsApp number, Instagram, or any other social link anytime by visiting our activation portal — no need to buy a new card.</div>
+          </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq6-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq6">What is the minimum order quantity?</button>
+            <div id="faq6" class="accordion-panel" role="region" aria-labelledby="faq6-toggle">The minimum order is 5 cards at ₹150 per card, plus a flat ₹120 shipping fee per order. For bulk orders (10, 20, 50+ cards), contact us on WhatsApp for partner pricing and reseller discounts.</div>
+          </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq7-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq7">Can I use the card to collect WhatsApp leads or Instagram followers too?</button>
+            <div id="faq7" class="accordion-panel" role="region" aria-labelledby="faq7-toggle">Absolutely. When customers tap the card, they land on your customisable profile page where you can show your Google Reviews link, WhatsApp chat, Instagram, Facebook, website and more — all in one tap.</div>
+          </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq8-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq8">Is the card waterproof? How durable is it?</button>
+            <div id="faq8" class="accordion-panel" role="region" aria-labelledby="faq8-toggle">The cards are made from premium acrylic material — scratch-resistant, water-resistant, and built for daily counter use. They're designed to withstand a busy business environment without deteriorating.</div>
+          </div>
+
+          <div class="accordion-item reveal">
+            <button id="faq9-toggle" class="accordion-toggle" aria-expanded="false" aria-controls="faq9">How do I activate and set up my card after I receive it?</button>
+            <div id="faq9" class="accordion-panel" role="region" aria-labelledby="faq9-toggle">Just go to <strong>reviewspread.in/activate</strong>, enter your card number and the 4-digit security PIN you created during ordering. You can then enter your Google Review link, WhatsApp, Instagram, and other details. It takes under 2 minutes.</div>
+          </div>
+
         </div>
       </div>
     </section>
   </main>
 
-  <footer id="footer" class="footer" role="contentinfo">
-    <div class="container footer-grid">
-      <div>
-        <a class="logo-footer" href="#hero" aria-label="TapAurReview home">
-          <img src="/assets/reviewspread-logo.svg" alt="TapAurReview" class="logo-img small">
-        </a>
-        <p class="muted">Based in India • Ships nationwide</p>
-      </div>
+  <footer id="footer" class="footer home-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
 
-      <div>
-        <h4>Contact Us</h4>
-        <p class="muted">Questions or ready to order? Reach us directly.</p>
-        <div class="footer-contact-actions">
-          <a class="footer-contact-link whatsapp-link" href="https://wa.me/917620952720" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" title="Chat on WhatsApp">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.07c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.05.17-.19.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.66.78 1.94.92.29.15.48.22.55.34.07.13.07.72-.17 1.4Z"/></svg>
-            <span>WhatsApp</span>
+        <!-- Brand col -->
+        <div class="footer-brand">
+          <a class="logo-footer" href="#hero" aria-label="TapAurReview home">
+            <img src="/assets/reviewspread-logo.svg" alt="TapAurReview" class="logo-img small">
           </a>
-          <a class="footer-contact-link instagram-link" href="https://www.instagram.com/tapaurreview?dmpr=MXJoZ21lMmU1YXRocA==" target="_blank" rel="noopener" aria-label="Follow Tap Aur Review on Instagram" title="Follow on Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-            <span>Instagram</span>
-          </a>
+          <p style="margin-top:12px; font-size:0.86rem; line-height:1.65; color:#d6d3d1;">India's smartest NFC review card — built for cafes, salons, clinics &amp; local businesses across every city. Tap once, grow forever.</p>
+          <div class="footer-badge">🇮🇳 Proudly Serving Pan-India</div>
         </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="footer-col-title">Quick Links</h4>
+          <ul class="footer-links-list">
+            <li><a href="#order">Order Cards</a></li>
+            <li><a href="#how-it-works">How it's Works</a></li>
+            <li><a href="#pricing">Card Designs</a></li>
+            <li><a href="#leaderboard">Leaderboard</a></li>
+            <li><a href="#faq">FAQs</a></li>
+            <li><a href="/reseller">Reseller Portal</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Us -->
+        <div>
+          <h4 class="footer-col-title">Get in Touch</h4>
+          <p style="font-size:0.86rem; color:#d6d3d1; margin:0 0 14px;">Questions, bulk orders, or reseller enquiries? We reply fast.</p>
+          <div class="footer-contact-actions">
+            <a class="footer-contact-link whatsapp-link" href="https://wa.me/917620952720" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" title="Chat on WhatsApp">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.07c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.05.17-.19.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.66.78 1.94.92.29.15.48.22.55.34.07.13.07.72-.17 1.4Z"/></svg>
+              <span>WhatsApp Us</span>
+            </a>
+            <a class="footer-contact-link instagram-link" href="https://www.instagram.com/tapaurreview?dmpr=MXJoZ21lMmU1YXRocA==" target="_blank" rel="noopener" aria-label="Follow Tap Aur Review on Instagram" title="Follow on Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+              <span>Instagram</span>
+            </a>
+          </div>
+          <p style="margin:14px 0 0; font-size:0.82rem; color:#d6d3d1;">🚚 Pan-India Shipping (2–3 Days)</p>
+          <p style="margin:4px 0 0; font-size:0.82rem; color:#d6d3d1;">⏰ Support: Mon–Sat, 10 AM – 8 PM IST</p>
+        </div>
+
+        <!-- Legal -->
+        <div>
+          <h4 class="footer-col-title">Legal &amp; Trust</h4>
+          <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+            <li style="font-size:0.84rem;color:#d6d3d1;line-height:1.5;">All sales are final. Refunds are not applicable on custom programmed NFC cards.</li>
+            <li style="font-size:0.84rem;color:#a8a29e;line-height:1.5;">TapAurReview is an independent platform and is not affiliated with Google LLC.</li>
+          </ul>
+        </div>
+
       </div>
 
-      <div>
-        <h4>Legal</h4>
-        <p class="muted">© <span id="year"></span> TapAurReview — All rights reserved.</p>
+      <div class="footer-bottom-bar">
+        <span>© <span id="year"></span> TapAurReview — All rights reserved.</span>
+        <span>Tap. Review. Spread. • Built for Indian Local Businesses</span>
       </div>
     </div>
   </footer>
@@ -909,6 +1256,24 @@
         toast.style.background = isErr ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.15)';
         toast.style.color = isErr ? '#fca5a5' : '#86efac';
       }
+    })();
+
+    // Auto-play Setup Guide Video when scrolled into view
+    (function() {
+      const iframe = document.getElementById('setupGuideVideo');
+      if (!iframe || !('IntersectionObserver' in window)) return;
+      let started = false;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !started) {
+            started = true;
+            const autoSrc = iframe.getAttribute('data-src');
+            if (autoSrc) iframe.src = autoSrc;
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.35 });
+      observer.observe(iframe);
     })();
   </script>
 </body>

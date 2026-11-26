@@ -37,6 +37,27 @@
       padding: 34px 22px;
       text-align: center;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(245, 158, 11, 0.06);
+      transition: background-image 0.3s ease;
+    }
+    .landing-card.has-card-bg {
+      position: relative;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      border: 1px solid rgba(212, 175, 55, 0.45);
+    }
+    .landing-card.has-card-bg::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, rgba(17, 14, 12, 0.65) 0%, rgba(15, 12, 10, 0.82) 42%, rgba(11, 15, 25, 0.94) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .landing-card.has-card-bg > * {
+      position: relative;
+      z-index: 1;
     }
     .biz-name {
       font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
@@ -188,9 +209,14 @@
       <div class="actions-stack">
         <!-- Google Review CTA (Hidden by default, shown if destination_url exists) -->
         <a id="btnGoogle" class="action-btn btn-google" href="#" target="_blank" rel="noopener" style="display: none;">
-          <svg class="btn-icon" viewBox="0 0 24 24">
-            <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
-          </svg>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#ffffff;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.2);">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/>
+              <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/>
+            </svg>
+          </span>
           Leave a Google Review
         </a>
 
@@ -289,7 +315,7 @@
           }
         }
 
-        // Check if card has AT LEAST one active destination link or logo
+        // Check if card has AT LEAST one active destination link, logo, or background
         const hasAnyLink = !!(
           (cardData?.destination_url && cardData.destination_url.trim()) ||
           (cardData?.whatsapp_url && cardData.whatsapp_url.trim()) ||
@@ -297,7 +323,8 @@
           (cardData?.whatsapp_group_url && cardData.whatsapp_group_url.trim()) ||
           (cardData?.facebook_url && cardData.facebook_url.trim()) ||
           (cardData?.website_url && cardData.website_url.trim()) ||
-          (cardData?.logo_url && cardData.logo_url.trim())
+          (cardData?.logo_url && cardData.logo_url.trim()) ||
+          (cardData?.bg_image_url && cardData.bg_image_url.trim())
         );
 
         // CASE 1: Card is ACTIVE or has ANY link configured -> SHOW LANDING PAGE DIRECTLY!
@@ -351,12 +378,12 @@
       } else {
         const { data, error } = await supabaseClient
           .from('clients')
-          .select('business_name, city_location, category, destination_url, whatsapp_url, instagram_url, whatsapp_group_url, facebook_url, website_url, logo_url')
+          .select('business_name, city_location, category, destination_url, whatsapp_url, instagram_url, whatsapp_group_url, facebook_url, website_url, logo_url, bg_image_url')
           .eq('slug', rawPath)
           .eq('platform', 'google')
           .single();
 
-        const hasAnyLink = data?.destination_url || data?.whatsapp_url || data?.instagram_url || data?.whatsapp_group_url || data?.facebook_url || data?.website_url || data?.logo_url;
+        const hasAnyLink = data?.destination_url || data?.whatsapp_url || data?.instagram_url || data?.whatsapp_group_url || data?.facebook_url || data?.website_url || data?.logo_url || data?.bg_image_url;
 
         if (error || !hasAnyLink) {
           document.getElementById('cardContainer').innerHTML = '<h2>Business link not found.</h2>';
@@ -382,6 +409,13 @@
         document.title = `${bizData.business_name} — Connect & Review`;
       }
       document.getElementById('bizLocation').textContent = bizData.city_location || '';
+
+      // Card Background Image (Shown inside card container behind profile & links)
+      if (bizData.bg_image_url && bizData.bg_image_url.trim()) {
+        const cardContainer = document.getElementById('cardContainer');
+        cardContainer.style.backgroundImage = `url("${bizData.bg_image_url.trim()}")`;
+        cardContainer.classList.add('has-card-bg');
+      }
 
       // Circular Logo Display
       if (bizData.logo_url && bizData.logo_url.trim()) {
